@@ -1,0 +1,72 @@
+# Kotlin/Java/Gradle
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin Multiplatform
+**/build/
+**/out/
+**/bin/
+**/generated/
+
+# Android
+local.properties
+*.apk
+*.ap_*
+*.dex
+*.class
+*.log
+*.hprof
+captures/
+
+# iOS
+*.xcworkspace
+*.xcodeproj
+*.xcuserstate
+*.xcuserdata
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcscmblueprint
+*.xcuserdatad
+*.swiftpm
+*.hmap
+*.ipa
+Pods/
+DerivedData/
+
+# JS/Node
+node_modules/
+
+# Misc
+*.swp
+*.swo
+*.tmp
+*.orig
+
+# KMP specific
+**/.DS_Store
+**/.idea/
+**/.vscode/
+**/.gradle/
+**/build/
+**/out/
+**/bin/
+**/generated/
+**/tmp/
+
+.Kotlin
