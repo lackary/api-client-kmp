@@ -1,72 +1,39 @@
-# Kotlin/Java/Gradle
+# Gradle Files
 .gradle/
 build/
-out/
-!gradle/wrapper/gradle-wrapper.jar
 
-# IDEs
+# Secrets and local properties
+# Ensure these are not versioned: API keys, local SDK paths
+gradle.properties
+local.properties
+
+# IDE specific files
 .idea/
+.vscode/
 *.iml
 *.ipr
 *.iws
-.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Kotlin Multiplatform
-**/build/
-**/out/
-**/bin/
-**/generated/
-
-# Android
-local.properties
-*.apk
-*.ap_*
-*.dex
-*.class
-*.log
 *.hprof
+
+# Build artifacts and caches
+.kotlin/
+.cxx/
+.DS_Store
 captures/
+.externalNativeBuild/
 
-# iOS
-*.xcworkspace
-*.xcodeproj
-*.xcuserstate
-*.xcuserdata
-*.moved-aside
-*.pbxuser
-*.mode1v3
-*.mode2v3
-*.perspectivev3
-*.xcscmblueprint
-*.xcuserdatad
-*.swiftpm
-*.hmap
-*.ipa
+# Kotlin Multiplatform specific
+/build/bin
+/build/klib
+/build/js
+/build/reports
+/build/test-results
+/build/tmp
+
+# iOS/CocoaPods
 Pods/
-DerivedData/
-
-# JS/Node
-node_modules/
-
-# Misc
-*.swp
-*.swo
-*.tmp
-*.orig
-
-# KMP specific
-**/.DS_Store
-**/.idea/
-**/.vscode/
-**/.gradle/
-**/build/
-**/out/
-**/bin/
-**/generated/
-**/tmp/
-
-.Kotlin
+*.podspec.json
+Podfile.lock
+*.xcodeproj
+*.xcworkspace
+*.xcuserdatad
