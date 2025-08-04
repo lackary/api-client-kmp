@@ -16,12 +16,20 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 object KtorClientFactory {
+
+    private val defaultLogger = object : io.ktor.client.plugins.logging.Logger { // Add logger parameter and provide a default value
+        override fun log(message: String) {
+            println("Ktor Client: $message")
+        }
+    }
+
     fun createHttpClient(
         engineFactory: HttpClientEngine,
         baseUrl: String,
         authToken: String? = null,
         authHeaderName: String = HttpHeaders.Authorization,
-        logLevel: LogLevel = LogLevel.ALL
+        logLevel: LogLevel = LogLevel.ALL,
+        logger: Logger = defaultLogger
     ): HttpClient {
         return HttpClient(engineFactory) {
             install(ContentNegotiation) {
@@ -32,12 +40,8 @@ object KtorClientFactory {
                 })
             }
             install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println("Ktor Client: $message")
-                    }
-                }
-                level = logLevel
+                this.logger = logger
+                this.level = logLevel
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 15000L
