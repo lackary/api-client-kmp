@@ -21,7 +21,6 @@ actual fun getKermitLogger(tag: String): Logger {
         config = StaticConfig(
             minSeverity = if (isDebuggable) Severity.Verbose else Severity.Info,
             logWriterList = listOf(
-                platformLogWriter(),
                 AppLogWriter()
             )
         ),

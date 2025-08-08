@@ -7,15 +7,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 
-fun provideNetworkModule(ktorConfig: KtorConfig, engineFactory: HttpClientEngine, loggerModule: Module): Module {
-    return module {
-        includes(loggerModule)
-        single {
-            KtorClientFactory.createHttpClient(
-                engineFactory = engineFactory,
-                ktorConfig = ktorConfig,
-                logger = get()
-            )
-        }
+fun provideNetworkModule(
+    ktorConfig: KtorConfig,
+    engineFactory: HttpClientEngine,
+    loggerModule: Module
+) = module {
+    includes(loggerModule)
+    single {
+        KtorClientFactory.createHttpClient(
+            engineFactory = engineFactory,
+            ktorConfig = ktorConfig,
+            logger = get()
+        )
     }
 }
