@@ -1,12 +1,10 @@
 package com.lackstudio.module.kmp.apiclient.core.common.logging
 
 import co.touchlab.kermit.Logger
-import co.touchlab.kermit.Severity
 
 class AppLoggerImpl(private val kermitLogger: Logger): AppLogger {
     override fun debug(message: String, throwable: Throwable?) =
         kermitLogger.d(message, throwable)
-
 
     override fun info(message: String, throwable: Throwable?) =
         kermitLogger.i(message, throwable)
