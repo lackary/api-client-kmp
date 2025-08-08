@@ -1,5 +1,7 @@
 package com.lackstudio.module.kmp.apiclient.core.network
 
+import co.touchlab.kermit.ExperimentalKermitApi
+import co.touchlab.kermit.Severity
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.plugins.logging.LogLevel
@@ -18,13 +20,26 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.http.HttpMethod
+import kotlin.test.BeforeTest
+import co.touchlab.kermit.TestLogWriter
 
 class KtorClientFactoryTest {
     // 1. Prepare: Create a MockEngine to simulate HTTP requests and responses.
-    val testBaseUrl = "https://example.com"
-    val testApiKey = "test-api-key"
-    val testAuthToken = "Client $testApiKey"
-    val testUrlPath = "/api/v1/data"
+    private val testBaseUrl = "https://example.com"
+    private val testApiKey = "test-api-key"
+    private val testAuthToken = "Client $testApiKey"
+    private val testUrlPath = "/api/v1/data"
+
+//    @OptIn(ExperimentalKermitApi::class)
+//    private lateinit var testLogWriter: TestLogWriter
+//
+//    @OptIn(ExperimentalKermitApi::class)
+//    @BeforeTest
+//    fun setup() {
+//        testLogWriter = TestLogWriter(loggable = Severity.Verbose)
+//        co.touchlab.kermit.Logger.setTag("KtorClient")
+//        co.touchlab.kermit.Logger.setLogWriters(listOf(testLogWriter))
+//    }
 
     @Test
     fun `createHttpClient should set up defaultRequest with correct baseUrl and headers`() =
@@ -140,7 +155,7 @@ class KtorClientFactoryTest {
             engineFactory = mockEngine,
             baseUrl = testBaseUrl,
             logLevel = LogLevel.INFO,
-            logger = testLogger
+//            logger = testLogger
         )
 
         // Trigger request
@@ -152,4 +167,31 @@ class KtorClientFactoryTest {
         // Verify if the logger was called
         assertEquals(2, logMessages.size)
     }
+
+//    @OptIn(ExperimentalKermitApi::class)
+//    @Test
+//    fun `test successful request logs as INFO`() = runTest {
+//        // 模擬一個成功的 HTTP 回應
+//        val mockEngine = MockEngine { respond("{}", HttpStatusCode.OK) }
+//        val client = KtorClientFactory.createHttpClient(
+//            engineFactory = mockEngine,
+//            baseUrl = "https://api.example.com"
+//        )
+//
+//        // 進行網路請求
+//        client.get("https://api.example.com/test")
+//
+//        // 驗證日誌列表
+//        assertEquals(2, testLogWriter.logs.size)
+//
+//        // 驗證 REQUEST 日誌
+//        val requestLog = testLogWriter.logs.firstOrNull { it.message.contains("REQUEST") }
+//        assertTrue(requestLog != null, "REQUEST log not found")
+//        assertEquals(Severity.Info, requestLog.severity, "REQUEST log should be INFO")
+//
+//        // 驗證 RESPONSE 日誌
+//        val responseLog = testLogWriter.logs.firstOrNull { it.message.contains("RESPONSE") }
+//        assertTrue(responseLog != null, "RESPONSE log not found")
+//        assertEquals(Severity.Info, responseLog.severity, "RESPONSE log should be INFO")
+//    }
 }
