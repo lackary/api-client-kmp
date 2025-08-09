@@ -62,6 +62,7 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.ktor.client.mock)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.koin.test)
             implementation(libs.koin.core)
             implementation(libs.touchlab.kermit)
             implementation(libs.touchlab.kermit.test)
