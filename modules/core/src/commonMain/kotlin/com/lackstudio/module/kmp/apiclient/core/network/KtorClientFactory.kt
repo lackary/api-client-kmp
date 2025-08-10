@@ -15,6 +15,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+expect fun provideHttpClientEngine(): HttpClientEngine
+//expect fun applyPlatformConfig(config: KtorHttpClientConfig<*>, engine: HttpClientEngine)
+
 object KtorClientFactory {
 
     private val defaultLogger = object : KtorLogger { // Add logger parameter and provide a default value
