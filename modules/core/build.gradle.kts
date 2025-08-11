@@ -104,7 +104,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lackstudio.module.kmp.apiclient.core"
+    namespace = "io.lackstudio.module.kmp.apiclient.core"
     compileSdk = 35
     defaultConfig {
         minSdk = 30
