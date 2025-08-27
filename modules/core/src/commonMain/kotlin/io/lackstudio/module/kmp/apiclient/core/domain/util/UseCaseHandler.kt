@@ -3,7 +3,6 @@ package io.lackstudio.module.kmp.apiclient.core.domain.util
 import io.lackstudio.module.kmp.apiclient.core.common.error.AppException
 import io.lackstudio.module.kmp.apiclient.core.domain.result.UseCaseResult
 
-
 /**
  * Executes a suspend function and wraps its result in a UseCaseResult.
  * Catches AppException and its subclasses, wrapping them as UseCaseResult.Error.

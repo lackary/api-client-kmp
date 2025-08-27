@@ -20,18 +20,18 @@ kotlin {
         }
     }
 
-    val xcf = XCFramework()
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "core"
-            xcf.add(this)
-            isStatic = true
+        val xcf = XCFramework()
+        listOf(
+            iosX64(),
+            iosArm64(),
+            iosSimulatorArm64()
+        ).forEach {
+            it.binaries.framework {
+                baseName = "CoreApiClient"
+                xcf.add(this)
+                isStatic = true
+            }
         }
-    }
 
     jvm()
 
@@ -40,16 +40,16 @@ kotlin {
             //put your multiplatform dependencies here
             implementation(kotlin("stdlib-common"))
             // Ktor Client Core
-            api(libs.ktor.client.core)
-            api(libs.ktor.client.content.negotiation)
-            api(libs.ktor.client.logging)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.logging)
             // Ktor
-            api(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             // Kotlinx
-            api(libs.kotlinx.serialization.core)
-            api(libs.kotlinx.serialization.json)
-            api(libs.kotlinx.datatime)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datatime)
 
             // Koin Core (Common Main)
             api(libs.koin.core) // Use an API to make dependencies visible to downstream modules.
@@ -66,13 +66,15 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.touchlab.kermit)
             implementation(libs.touchlab.kermit.test)
-
         }
 
         jvmMain.dependencies {
-            api(libs.ktor.client.cio)
+            implementation(libs.ktor.client.cio)
             // Kermit Logger
             api(libs.touchlab.kermit)
+            implementation(libs.org.slf4j.api)
+            implementation(libs.ch.qos.logback.classic)
+
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
@@ -81,7 +83,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            api(libs.ktor.client.android)
+            implementation(libs.ktor.client.android)
             // Kermit Logger
             api(libs.touchlab.kermit)
         }
@@ -91,9 +93,8 @@ kotlin {
             implementation(libs.ktor.client.android)
         }
 
-
         iosMain.dependencies {
-            api(libs.ktor.client.darwin)
+            implementation(libs.ktor.client.darwin)
             api(libs.touchlab.kermit)
         }
         iosTest.dependencies {
