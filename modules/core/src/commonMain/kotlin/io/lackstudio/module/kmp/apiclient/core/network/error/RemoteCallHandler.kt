@@ -7,7 +7,6 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import kotlinx.serialization.SerializationException
-
 import io.ktor.client.network.sockets.ConnectTimeoutException
 
 suspend fun <T> toResult(call: suspend () -> T): Result<T> {

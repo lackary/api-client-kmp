@@ -16,7 +16,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 expect fun provideHttpClientEngine(): HttpClientEngine
-expect fun applyPlatformConfig(config: KtorHttpClientConfig<*>)
 
 object KtorClientFactory {
 
