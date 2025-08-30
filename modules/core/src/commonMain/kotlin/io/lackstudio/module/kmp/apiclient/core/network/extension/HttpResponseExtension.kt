@@ -50,7 +50,7 @@ suspend inline fun <reified T> HttpResponse.toResult(): Result<T> {
         Logger.e(e) { "Error during API call or response processing: ${e.message}" }
 
         val appException = when (e) {
-            is HttpRequestTimeoutException -> AppException.Network.Timeout(cause = e)
+            is HttpRequestTimeoutException -> AppException.Network.Timeout("request time out: ${e.message}", cause = e)
             is SerializationException -> AppException.Business.Serialization(cause = e)
             // Ktor's ClientRequestException (4xx) and ServerResponseException (5xx)
             // are usually handled in the validateResponse phase, but can also be caught here as a fallback
