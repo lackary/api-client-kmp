@@ -4,8 +4,8 @@ import co.touchlab.kermit.LogWriter
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
-import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLoggerImpl
-import io.lackstudio.module.kmp.apiclient.core.common.logging.KtorKermitLoggerAdapter
+import io.lackstudio.module.kmp.apiclient.core.common.logging.AppKermitLogger
+import io.lackstudio.module.kmp.apiclient.core.common.logging.KtorKermitLogger
 import io.lackstudio.module.kmp.apiclient.core.common.logging.LogConfiguration
 import io.lackstudio.module.kmp.apiclient.core.common.logging.setupKermitLogger
 import io.lackstudio.module.kmp.apiclient.core.network.KtorClientFactory
@@ -21,14 +21,14 @@ fun appLoggerModule(logWriter: LogWriter) = module {
     single(named(APP_LOGGER_TAG)) {
         setupKermitLogger(LogConfiguration.appTag, logWriter)
     }
-    single<AppLogger> { AppLoggerImpl(get(named(APP_LOGGER_TAG))) }
+    single<AppLogger> { AppKermitLogger(get(named(APP_LOGGER_TAG))) }
 }
 
 fun ktorLoggerModule(logWriter: LogWriter) = module {
     single(named(KTOR_LOGGER_TAG)) {
         setupKermitLogger(LogConfiguration.ktorTag, logWriter)
     }
-    single<KtorLogger> { KtorKermitLoggerAdapter(get(named(KTOR_LOGGER_TAG))) }
+    single<KtorLogger> { KtorKermitLogger(get(named(KTOR_LOGGER_TAG))) }
 
 }
 

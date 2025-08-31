@@ -2,7 +2,7 @@ package io.lackstudio.module.kmp.apiclient.core.common.logging
 
 import co.touchlab.kermit.Logger
 
-class AppLoggerImpl(private val kermitLogger: Logger): AppLogger {
+class AppKermitLogger(private val kermitLogger: Logger): AppLogger {
     override fun debug(tag: String, message: String, throwable: Throwable?) =
         kermitLogger.d(tag = tag, messageString = message, throwable = throwable)
 
