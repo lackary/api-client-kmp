@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
-class KtorKermitLoggerAdapter(private val kermitLogger: Logger): KtorLogger {
+class KtorKermitLogger(private val kermitLogger: Logger): KtorLogger {
 
     private val prettyJson = Json { prettyPrint = true }
 
