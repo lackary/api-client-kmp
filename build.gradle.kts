@@ -14,5 +14,5 @@ plugins {
 subprojects {
     //trick: for the same plugin versions in all sub-modules
     group = "io.lackstudio.module.kmp.apiclient"
-    version = "0.0.1"
+    version = "0.1.0"
 }
