@@ -33,8 +33,6 @@ on:
 jobs:
   build-multiplatform:
     runs-on: macos-latest
-    env:
-      GRADLE_OPTS: "-Xmx4096M -Dorg.gradle.daemon.idletimeout=3600000"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -62,4 +60,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build entire project
-        run: ./gradlew build -Porg.gradle.caching=true ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+        run: ./gradlew build -Porg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx8192M ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
