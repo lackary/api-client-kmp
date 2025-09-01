@@ -65,8 +65,8 @@ jobs:
       - name: List test results directory # Add debug step
         if: always() # Run even if the previous step fails
         run: |
-          echo "Looking for test reports in build/test-results/"
-          ls -R build/test-results/
+          echo "Looking for test reports in **/build/test-results/**/*.xml"
+          ls -R **/build/test-results/**/*.xml
           echo "Looking for XML files with find:"
           find build/test-results -name "*.xml"
 
@@ -75,5 +75,5 @@ jobs:
         if: always() # success() || failure() # Run on success or failure
         with:
           name: Test Results
-          path: 'build/test-results/**/*.xml' # Path to JUnit XML reports
+          path: '**/build/test-results/**/*.xml' # Path to JUnit XML reports
           reporter: java-junit # Select based on report format
