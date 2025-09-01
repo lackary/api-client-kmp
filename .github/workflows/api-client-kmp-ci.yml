@@ -62,14 +62,6 @@ jobs:
       - name: Build and test entire project
         run: ./gradlew build -Porg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx8192M ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
 
-      - name: List test results directory # Add debug step
-        if: always() # Run even if the previous step fails
-        run: |
-          echo "Looking for test reports in **/build/test-results/**/*.xml"
-          ls -R **/build/test-results/**/*.xml
-          echo "Looking for XML files with find:"
-          find build/test-results -name "*.xml"
-
       - name: Test Reporter
         uses: dorny/test-reporter@v1
         if: always() # success() || failure() # Run on success or failure
@@ -77,3 +69,4 @@ jobs:
           name: Test Results
           path: '**/build/test-results/**/*.xml' # Path to JUnit XML reports
           reporter: java-junit # Select based on report format
+          token: ${{secrets.GITHUB_TOKEN}}
