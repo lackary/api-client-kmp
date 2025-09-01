@@ -59,5 +59,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build entire project
+      - name: Build and test entire project
         run: ./gradlew build -Porg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx8192M ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1
+        if: always() # success() || failure()
+        with:
+          name: Test Results
+          path: 'build/test-results/**/*.xml' # Path to JUnit XML reports
+          reporter: java-junit # Select based on report format
