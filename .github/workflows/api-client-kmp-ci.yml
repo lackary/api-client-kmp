@@ -88,6 +88,9 @@ jobs:
 #      checks: write
     if: always() # Always run the report job, even if build-and-test fails (dorny/test-reporter can report failures)
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Download Test Reports
         uses: actions/download-artifact@v4
         with:
@@ -97,8 +100,8 @@ jobs:
       - name: Test Reporter
         uses: dorny/test-reporter@v1
         with:
-          name: Test Results (from separate job)
-          path: 'downloaded-test-reports/**/*.xml' # 指向下載的報告路徑
+          name: Test Results
+          path: 'downloaded-test-reports/**/*.xml' # Point to the downloaded report path
           reporter: java-junit
           token: ${{ secrets.GITHUB_TOKEN }} # Point to the downloaded report path
           # fail-on-error: true # Set as needed; if build-and-test has already failed, you might not need this to fail again
