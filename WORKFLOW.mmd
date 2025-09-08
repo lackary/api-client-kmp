@@ -1,0 +1,49 @@
+flowchart TD
+    A0[Start Workflow] --> A1;
+
+    subgraph "1. Issue Creation and Scheduling"
+        A1[New Issue Created] -->|Automated| B1[Project Item: Backlog];
+    end
+
+    subgraph "2. Development Phase"
+        B1 -- Manual --> C1[Project Item: To Do];
+        C1 -- Developer Manually Assigns --> D1["Project Item: In Progress\n(Create new branch, Develop)"];
+    end
+
+    subgraph "3. PR Creation and CI"
+        D1 -- Push code, Create PR --> E1[Project Item: In Review];
+        E1 -->|Automated Trigger| F1[CI Process: Build and Test];
+    end
+
+    subgraph "4. Automated Release and QA Setup"
+        F1 -- PR Approved & CI Passed --> G1[Merge to main branch];
+        F1 -- CI Failed/PR Not Approved --> E1;
+
+        G1 -->|Automated| H1[Original Dev Item: Done];
+        G1 -->|Automated, After PR Merge| I1["Wait for Batch Processing\n(e.g., 5 minutes)"];
+        I1 -->|After Batch Ends, Automated| J1[CD: Deploy to Staging Environment];
+        J1 -->|Automated| K1[Increment Version & Create Git Tag];
+        J1 -->|Automated| L1{Generate QA Test Issue};
+        L1 -- Single PR --> L1_a["QA Issue Title:\nQA Verification: <PR Title>"];
+        L1 -- Multiple PRs --> L1_b["QA Issue Title:\nQA Verification: Release Version v<Version Number>"];
+        L1_a -->|Automated| M1[QA Issue: In Test];
+        L1_b -->|Automated| M1;
+    end
+
+    subgraph "5. Test Feedback and Bug Fixing"
+        M1 -- QA Manually Reports Bug --> N1[QA Issue Status: Bug];
+        N1 --> N2["Create New Issue for this Bug\n(Returns to Dev Flow C1)"];
+        N2 --> C1
+        %% New Bug Issue enters development flow
+
+        %% After Bug Issue's PR is merged (this is a G1-like event for the bug fix)
+        BugFixPRMerged[Bug Issue's PR Merged] --> N3[QA Team Retests Original QA Issue];
+        N3 --> M1
+        %% Retest the original QA Issue
+    end
+
+    subgraph "6. Final Release"
+        M1 -- QA Manually Confirms No Issues --> P1[QA Issue Status: Done];
+        P1 -->|Manual or Automated| Q1[Deploy to Production Environment];
+        Q1 --> R1[End Workflow];
+    end
