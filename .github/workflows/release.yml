@@ -49,5 +49,5 @@ jobs:
 
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is the built-in token provided by GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in token provided by GitHub
         run: npx semantic-release
