@@ -1,0 +1,49 @@
+flowchart TD
+    A0[流程開始] --> A1;
+
+    subgraph "1. Issue 創建與排程"
+        A1[新 Issue 創建] -->|自動化| B1[專案 Item: Backlog];
+    end
+
+    subgraph "2. 開發階段"
+        B1 -- 手動 --> C1[專案 Item: To Do];
+        C1 -- 開發者手動領取 --> D1["專案 Item: In Progress\n(建新分支, 開發)"];
+    end
+
+    subgraph "3. PR 創建與 CI"
+        D1 -- 推送程式碼, 創建PR --> E1[專案 Item: In Review];
+        E1 -->|自動化觸發| F1[CI 流程: 建置與測試];
+    end
+
+    subgraph "4. 自動化發布與 QA 設定"
+        F1 -- PR核准 & CI通過 --> G1[合併到 main 分支];
+        F1 -- CI失敗/PR未核准 --> E1;
+
+        G1 -->|自動化| H1[原開發 Item: Done];
+        G1 -->|自動化, PR合併後| I1["等待批次處理\n(e.g., 5 分鐘)"];
+        I1 -->|批次結束後, 自動化| J1[CD: 部署到 Staging 環境];
+        J1 -->|自動化| K1[提升版本號 & 建 Git Tag];
+        J1 -->|自動化| L1{產生 QA 測試 Issue};
+        L1 -- 單一 PR --> L1_a["QA Issue 標題:\nQA 驗證：<PR 標題>"];
+        L1 -- 多個 PR --> L1_b["QA Issue 標題:\nQA 驗證：發布版本 v<版本號>"];
+        L1_a -->|自動化| M1[QA Issue: In Test];
+        L1_b -->|自動化| M1;
+    end
+
+    subgraph "5. 測試回饋與 Bug 修復"
+        M1 -- QA手動回報Bug --> N1[QA Issue 狀態: Bug];
+        N1 --> N2["為此Bug創建新Issue\n(返回開發流程 C1)"];
+        N2 --> C1
+        %% New Bug Issue enters development flow
+
+        %% After Bug Issue's PR is merged (this is a G1-like event for the bug fix)
+        BugFixPRMerged[Bug Issue 的 PR 合併] --> N3[QA團隊重測原QA Issue];
+        N3 --> M1
+        %% Retest the original QA Issue
+    end
+
+    subgraph "6. 最終發布"
+        M1 -- QA手動確認無問題 --> P1[QA Issue 狀態: Done];
+        P1 -->|手動或自動化| Q1[部署到 Production 環境];
+        Q1 --> R1[流程結束];
+    end
