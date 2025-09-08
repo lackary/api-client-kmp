@@ -31,10 +31,10 @@ on:
         default: false
 
 jobs:
-  build-multiplatform:
+  build-and-test:
     runs-on: macos-latest
-    env:
-      GRADLE_OPTS: "-Xmx4096M -Dorg.gradle.daemon.idletimeout=3600000"
+    outputs: # Optional, if subsequent jobs need to know if the tests were successful
+      test_outcome: ${{ steps.run_tests.outcome }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,8 +48,60 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+#      - name: Cache Gradle packages
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build entire project
-        run: ./gradlew build ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+      - name: Build and test entire project
+        run: ./gradlew build -Porg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx8192M ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports # Name of the Artifact
+          path: '**/build/test-results/**/*.xml'
+          retention-days: 1 # Optional, set the artifact retention time
+
+#      - name: Test Reporter
+#        uses: dorny/test-reporter@v1
+#        if: always() # success() || failure() # Run on success or failure
+#        with:
+#          name: Test Results
+#          path: '**/build/test-results/**/*.xml' # Path to JUnit XML reports
+#          reporter: java-junit # Select based on report format
+#          token: ${{secrets.GITHUB_TOKEN}}
+
+  report-test-results:
+    runs-on: ubuntu-latest # The report job can use a different OS if needed
+    needs: build-and-test # Ensures this runs after build-and-test is complete
+#    permissions: # Ensures the report job has permissions to create check runs
+#      checks: write
+    if: always() # Always run the report job, even if build-and-test fails (dorny/test-reporter can report failures)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Test Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports # Same as the artifact name used for uploading
+          path: downloaded-test-reports # Download to a specified directory
+
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test Results
+          path: 'downloaded-test-reports/**/*.xml' # Point to the downloaded report path
+          reporter: java-junit
+          token: ${{ secrets.GITHUB_TOKEN }} # Point to the downloaded report path
+          # fail-on-error: true # Set as needed; if build-and-test has already failed, you might not need this to fail again
