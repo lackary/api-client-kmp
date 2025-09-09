@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - staging
+
+  pull_request:
+    branches:
+      - main
+      - staging
+
 #  workflow_dispatch:
 #    inputs:
 #      manual_release:
@@ -14,12 +20,14 @@ on:
 
 jobs:
   release:
-    name: Release
+    name: release
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
       issues: write
       pull-requests: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +48,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Release
+      - name: Execute semantic release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is the built-in token provided by GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in token provided by GitHub
         run: npx semantic-release

@@ -1,16 +1,17 @@
 {
-  "name": "your-kmp-project-automation",
+  "name": "api-client-kmp",
   "version": "0.0.0",
   "private": true,
   "description": "Automation configuration for KMP project.",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^12.0.1",
-    "@semantic-release/github": "^10.0.6",
-    "semantic-release": "^24.0.0"
+    "@semantic-release/exec": "^7.1.0 ",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.5",
+    "semantic-release": "^24.2.7"
   },
   "release": {
+    "tagFormat": "${version}",
     "branches": [
       "main",
       {
@@ -19,7 +20,12 @@
       }
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "debug": true
+        }
+      ],
       "@semantic-release/release-notes-generator",
       "@semantic-release/changelog",
       [
@@ -31,7 +37,11 @@
       [
         "@semantic-release/git",
         {
-          "assets": ["package.json", "package-lock.json", "CHANGELOG.md"],
+          "assets": [
+            "package.json",
+            "package-lock.json",
+            "CHANGELOG.md"
+          ],
           "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
         }
       ],
