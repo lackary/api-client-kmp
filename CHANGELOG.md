@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/lackary/api-client-kmp/compare/0.1.0...0.2.0) (2025-09-09)
+
+
+### Bug Fixes
+
+* **ci:** read API key from environment ([abca10c](https://github.com/lackary/api-client-kmp/commit/abca10c79feded09cf9cb68ba67b2d7ea4ab5426))
+
+
+### Features
+
+* **module:** Create unsplash-api-client module ([81d6231](https://github.com/lackary/api-client-kmp/commit/81d623182e0bd3d3f0d833a53df94f7f5f008077))
+
 # [0.1.0](https://github.com/lackary/api-client-kmp/compare/0.0.1...0.1.0) (2025-09-09)
 
 
