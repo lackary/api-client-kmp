@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/lackary/api-client-kmp/compare/0.2.0...0.2.1) (2025-09-09)
+
+
+### Bug Fixes
+
+* **ci:** Add API key in the automated release ([1557a01](https://github.com/lackary/api-client-kmp/commit/1557a015716a73ec9287f1a6888e1842086ca914))
+
 # [0.2.0](https://github.com/lackary/api-client-kmp/compare/0.1.0...0.2.0) (2025-09-09)
 
 
