@@ -1,10 +1,24 @@
+import com.android.build.gradle.internal.testFixtures.getTestFixturesCapabilityForProject
+import com.android.build.gradle.internal.testFixtures.testFixturesFeatureName
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.buildkonfig.gradle.plugin)
+    }
+}
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.devtool.ksp)
+    alias(libs.plugins.buildkonfig)
     alias(libs.plugins.kotlin.serialization)
     id("maven-publish")
 }
@@ -22,101 +36,97 @@ kotlin {
         }
     }
 
-        val xcf = XCFramework()
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64()
-        ).forEach {
-            it.binaries.framework {
-                baseName = "CoreApiClient"
-                xcf.add(this)
-                isStatic = true
-            }
+    val xcf = XCFramework()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "UnsplashApiClient"
+            xcf.add(this)
+            isStatic = true
         }
+    }
 
     jvm()
 
     sourceSets {
         commonMain.dependencies {
             //put your multiplatform dependencies here
+            implementation(project(":modules:core"))
             implementation(kotlin("stdlib-common"))
-            // Ktor Client Core
-            implementation(libs.ktor.client.core)
+            implementation(libs.koin.core)
             implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.client.logging)
-            // Ktor
             implementation(libs.ktor.serialization.kotlinx.json)
-
-            // Kotlinx
-            implementation(libs.kotlinx.serialization.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datatime)
-
-            // Koin Core (Common Main)
-            api(libs.koin.core) // Use an API to make dependencies visible to downstream modules.
-
-            // Kermit Logger
-            api(libs.touchlab.kermit)
-//            api(libs.touchlab.kermit.ktor.logger)
+            implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation(libs.ktor.client.mock)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.koin.test)
-            implementation(libs.koin.core)
+            implementation(libs.ktor.client.mock)
             implementation(libs.touchlab.kermit)
-            implementation(libs.touchlab.kermit.test)
         }
 
         jvmMain.dependencies {
-            implementation(libs.ktor.client.cio)
-            // Kermit Logger
-            api(libs.touchlab.kermit)
-            implementation(libs.org.slf4j.api)
-            implementation(libs.ch.qos.logback.classic)
 
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.koin.test)
+            implementation(libs.ktor.client.mock)
             implementation(libs.ktor.client.cio)
             implementation(libs.koin.test.junit4)
         }
 
         androidMain.dependencies {
-            implementation(libs.ktor.client.android)
-            // Kermit Logger
-            api(libs.touchlab.kermit)
-        }
 
+        }
         androidUnitTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.koin.test)
+            implementation(libs.ktor.client.mock)
             implementation(libs.ktor.client.android)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-            api(libs.touchlab.kermit)
+
         }
         iosTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.koin.test)
+            implementation(libs.ktor.client.mock)
             implementation(libs.ktor.client.darwin)
         }
     }
 }
 
+buildkonfig {
+    packageName = "io.lackstudio.module.kmp.apiclient.unsplash.config"
+    val unsplashApiKey = System.getenv("UNSPLASH_API_KEY")
+        ?: project.properties["UNSPLASH_API_KEY"] as? String
+        ?: error("UNSPLASH_API_KEY not found. Please set it as an environment variable or in gradle.properties.")
+
+    defaultConfigs {
+        buildConfigField(STRING, "UNSPLASH_API_KEY", unsplashApiKey)
+    }
+}
+
 android {
-    namespace = "io.lackstudio.module.kmp.apiclient.core"
+    namespace = "io.lackstudio.module.kmp.apiclient.unsplash"
     compileSdk = 35
     defaultConfig {
         minSdk = 30
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-
 }
 
 publishing {
@@ -125,7 +135,7 @@ publishing {
         //     artifactId = "testing" // or your artifact name
         // }
         create<MavenPublication>("maven") {
-            artifactId = "core"
+            artifactId = "unsplash-api-client"
             from(components["kotlin"])
         }
     }
