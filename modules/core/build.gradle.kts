@@ -11,6 +11,8 @@ plugins {
 
 kotlin {
     androidTarget {
+        // This is necessary to publish the Android library variant.
+        publishLibraryVariants("release")
         compilations.all {
             compileTaskProvider.configure {
                 compilerOptions {
