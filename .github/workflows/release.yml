@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - staging
+
 #  workflow_dispatch:
 #    inputs:
 #      manual_release:
@@ -19,7 +20,7 @@ on:
 
 jobs:
   release:
-    name: Automated Release
+    name: release
     runs-on: ubuntu-latest
 
     permissions:
@@ -47,7 +48,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Release
+      - name: Execute semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in token provided by GitHub
         run: npx semantic-release

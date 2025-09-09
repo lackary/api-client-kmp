@@ -1,12 +1,14 @@
-name: API Client KMP CI
+name: Build and Test
 
 on:
   push:
     branches:
       - main
+
   pull_request:
     branches:
       - '*'
+
   workflow_dispatch:
     inputs:
       enable_kotlin_daemon:
@@ -14,16 +16,19 @@ on:
         type: boolean
         required: false
         default: false
+
       run_with_stacktrace:
         description: 'Run Gradle with --stacktrace'
         type: boolean
         required: false
         default: false
+
       run_with_info:
         description: 'Run Gradle with --info'
         type: boolean
         required: false
         default: false
+
       run_with_debug:
         description: 'Run Gradle with --debug'
         type: boolean
@@ -32,9 +37,11 @@ on:
 
 jobs:
   build-and-test:
+    name: build and test
     runs-on: macos-latest
     outputs: # Optional, if subsequent jobs need to know if the tests were successful
       test_outcome: ${{ steps.run_tests.outcome }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -82,6 +89,7 @@ jobs:
 #          token: ${{secrets.GITHUB_TOKEN}}
 
   report-test-results:
+    name: report test results
     runs-on: ubuntu-latest # The report job can use a different OS if needed
     needs: build-and-test # Ensures this runs after build-and-test is complete
 #    permissions: # Ensures the report job has permissions to create check runs
