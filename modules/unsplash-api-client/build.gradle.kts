@@ -107,7 +107,9 @@ kotlin {
 
 buildkonfig {
     packageName = "io.lackstudio.module.kmp.apiclient.unsplash.config"
-    val unsplashApiKey = project.properties["UNSPLASH_API_KEY"] as String
+    val unsplashApiKey = System.getenv("UNSPLASH_API_KEY")
+        ?: project.properties["UNSPLASH_API_KEY"] as? String
+        ?: error("UNSPLASH_API_KEY not found. Please set it as an environment variable or in gradle.properties.")
 
     defaultConfigs {
         buildConfigField(STRING, "UNSPLASH_API_KEY", unsplashApiKey)
