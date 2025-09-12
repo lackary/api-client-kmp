@@ -4,10 +4,28 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/**'
+      - 'composeApp/**'
+      - 'iosApp/**'
+      - 'gradle/**'
+      - 'modules/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'package.json'
 
   pull_request:
     branches:
       - '*'
+    paths:
+      - '.github/workflows/**'
+      - 'composeApp/**'
+      - 'iosApp/**'
+      - 'gradle/**'
+      - 'modules/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'package.json'
 
   workflow_dispatch:
     inputs:
