@@ -4,7 +4,6 @@ about: For maintenance tasks unrelated to the application code.
 title: ''
 labels: chore
 assignees: ''
-
 ---
 
 ### Task
