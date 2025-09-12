@@ -1,10 +1,11 @@
 ---
-name: 🚀 Code Change / Doc / Chore / Fix Bugs
+name: Code Change / Doc / Chore / Fix Bugs
 about: Use this template for submitting all types of changes.
 title: '[Type]: [Brief description] (#issue number)'
 labels: ''
 assignees: ''
 ---
+<!--- the above YAML Front-matter doesn't work in GitHub --->
 
 ### Related Issues
 
@@ -29,7 +30,11 @@ Please check the main type of change this PR introduces. If there are multiple, 
 
 ### How to test it?
 
-[Please provide detailed steps for reviewers to verify your changes.]
+Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration.
+
+- [ ] **Unit tests:** Did you write new tests to verify the smallest units of code?
+- [ ] **Integration tests:** Did you test how different parts of the system work together?
+- [ ] **Manual testing (describe steps below):** Please describe the steps a reviewer can follow to manually test your changes.
 
 ### Review Checklist
 
