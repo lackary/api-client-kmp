@@ -10,11 +10,11 @@ assignees: ''
 
 Please check the applicable test type:
 
--  [ ] **Unit Test:** Tests for a single function or module.
--  [ ] **Integration Test:** Tests for the collaboration of multiple modules.
--  [ ] **End-to-End Test:** Tests that simulate user behavior.
--  [ ] **Manual Test:** A test plan that requires manual execution.
--  [ ] **Other:** [Please briefly describe]
+- [ ] **Unit Test:** Tests for a single function or module.
+- [ ] **Integration Test:** Tests for the collaboration of multiple modules.
+- [ ] **End-to-End Test:** Tests that simulate user behavior.
+- [ ] **Manual Test:** A test plan that requires manual execution.
+- [ ] **Other:** [Please briefly describe]
 
 ### Test Objective
 
