@@ -4,7 +4,6 @@ about: For questions that don't fit into a bug report or feature request.
 title: ''
 labels: question
 assignees: ''
-
 ---
 
 ### What is your question?

@@ -4,7 +4,6 @@ about: Want to request new or updated documentation?
 title: ''
 labels: documentation
 assignees: ''
-
 ---
 
 ### Request

@@ -3,8 +3,7 @@ name: Bug Report
 about: Found a bug or an unexpected behavior?
 title: ''
 labels: bug
-assignees: lackary
-
+assignees: ''
 ---
 
 ### What happened?
