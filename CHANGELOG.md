@@ -1,3 +1,15 @@
+# [0.3.0](https://github.com/lackary/api-client-kmp/compare/0.2.1...0.3.0) (2025-09-17)
+
+
+### Bug Fixes
+
+* **ci:** Build failure due to missing AndroidX property ([3a171a4](https://github.com/lackary/api-client-kmp/commit/3a171a4cc0dff35f17a4abef55bada0f9b7dc883))
+
+
+### Features
+
+* **module:** Create ui module ([41914c8](https://github.com/lackary/api-client-kmp/commit/41914c82565a49e683504b5c9670ec5425174ec6))
+
 ## [0.2.1](https://github.com/lackary/api-client-kmp/compare/0.2.0...0.2.1) (2025-09-09)
 
 
