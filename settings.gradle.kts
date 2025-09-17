@@ -20,4 +20,5 @@ dependencyResolutionManagement {
 rootProject.name = "api-client-kmp"
 
 include(":modules:core")
+include(":modules:ui")
 include(":modules:unsplash-api-client")
