@@ -1,3 +1,16 @@
+# [0.4.0](https://github.com/lackary/api-client-kmp/compare/0.3.0...0.4.0) (2025-09-22)
+
+
+### Bug Fixes
+
+* **ci:** Compose Multiplatform test failed in  the test task ([86c3cc7](https://github.com/lackary/api-client-kmp/commit/86c3cc7e774c1242f7b5ab2ca9a76dcbf71616cd))
+* **ci:** Compose Multiplatform test failed in  the test task ([24d46ad](https://github.com/lackary/api-client-kmp/commit/24d46ad3332e8500a245bd12c137910726edb7c8))
+
+
+### Features
+
+* **app:** Create Compose Multiplatform app ([bf6c18d](https://github.com/lackary/api-client-kmp/commit/bf6c18d00b6f61c0d4a35f311f1bfd95906c42bb))
+
 # [0.3.0](https://github.com/lackary/api-client-kmp/compare/0.2.1...0.3.0) (2025-09-17)
 
 
