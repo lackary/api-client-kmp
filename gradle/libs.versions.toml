@@ -9,6 +9,7 @@ coreKtx = "1.16.0"
 # compose
 composeHotReload = "1.0.0-beta04"
 composeMultiplatform = "1.8.2"
+composeUi = "1.9.1"
 
 # material
 material = "1.12.0"
@@ -47,11 +48,16 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
 turbine = "1.2.1"
+robolectric = "4.16"
 
 [libraries]
 # Android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+
+# google
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # Kotlin Multiplatform
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
@@ -96,7 +102,6 @@ ch-qos-logback-classic = { module = "ch.qos.logback:logback-classic", version.re
 
 # Mapper
 #kopykat = { module = "com.rickbusarow.kopykat:kopykat-compiler-api", version.ref = "kopykat" }
-
 mapstruct-core = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
 
@@ -109,13 +114,15 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
+koin-test-junit5 = { module = "io.insert-koin:koin-test-junit5", version.ref = "koin" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 mockk  = { module = "io.mockk:mockk", version.ref = "mockk" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi"}
+androidx-compose-ui-test-mainfest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "composeUi"}
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 turbine-test = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
