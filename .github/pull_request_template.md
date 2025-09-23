@@ -1,11 +1,3 @@
----
-name: Code Change / Doc / Chore / Fix Bugs
-about: Use this template for submitting all types of changes.
-title: '[Type]: [Brief description] (#issue number)'
-labels: ''
-assignees: ''
----
-<!--- the above YAML Front-matter doesn't work in GitHub --->
 
 ### Related Issues
 

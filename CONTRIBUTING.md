@@ -10,10 +10,10 @@ Before you submit a new issue, please search existing issues to avoid duplicates
 
 When submitting an issue, please provide the following information:
 
-- **Title**: A brief and descriptive title for your issue.
-- **Steps to Reproduce**: If it's a bug report, please provide detailed steps to reproduce the issue. This helps us fix it faster.
-- **Expected vs. Actual Result**: Describe what you expected to happen and what actually occurred.
-- **Environment Information**: Include details about your environment, such as your browser, operating system, and version numbers.
+- **Title:** A brief and descriptive title for your issue.
+- **Steps to Reproduce:** If it's a bug report, please provide detailed steps to reproduce the issue. This helps us fix it faster.
+- **Expected vs. Actual Result:** Describe what you expected to happen and what actually occurred.
+- **Environment Information:** Include details about your environment, such as your browser, operating system, and version numbers.
 
 ---
 
@@ -46,7 +46,7 @@ We follow the **[Conventional Commits](https://www.conventionalcommits.org/en/v1
 [optional footer(s)]
 ```
 
-- **`type`**: Required. Describes the main purpose of the commit. Common types are:
+- **`type`:** Required. Describes the main purpose of the commit. Common types are:
   - `feat`: A new feature
   - `fix`: A bug fix
   - `docs`: Documentation changes
@@ -56,10 +56,10 @@ We follow the **[Conventional Commits](https://www.conventionalcommits.org/en/v1
   - `test`: Adding or correcting tests
   - `chore`: Changes to the build process or auxiliary tools and libraries
 
-- **`scope`**: Optional. Describes the part of the codebase affected by the change (e.g., `(login)` or `(api)`).
-- **`subject`**: Required. A short, concise description of the change.
+- **`scope`:** Optional. Describes the part of the codebase affected by the change (e.g., `(login)` or `(api)`).
+- **`subject`:** Required. A short, concise description of the change.
 
-**Examples**:
+**Examples:**
 
 ```text
 feat(module): create xxx module
@@ -67,12 +67,12 @@ fix(api): fix 500 server error
 chore(ci): edit workflow yml
 ```
 
-**Breaking Changes**:
+**Breaking Changes:**
 If your changes include any content that **breaks backward compatibility**, you must explicitly mark this change.
 This will trigger a major version update and follows the [Semantic Versioning](https://semver.org/) specification.
 Add a `!` after the `<type>` or `<scope>` in the commit header.
 
-**Example**:
+**Example:**
 
 ```text
 feat(api)!: remove old user client
@@ -81,10 +81,10 @@ feat(api)!: remove old user client
 **Commit Body**
 The `body` is optional and is used to provide a detailed description of the commit. Use it when your changes require more context.
 
-- **Purpose**: Explain **why** this change is important and **how** it solves the problem.
-- **Format**: The body should start after a blank line following the subject line. When the change involves multiple items, it is recommended to use an **unordered list** for better readability.
+- **Purpose:** Explain **why** this change is important and **how** it solves the problem.
+- **Format:** The body should start after a blank line following the subject line. When the change involves multiple items, it is recommended to use an **unordered list** for better readability.
 
-**Example**:
+**Example:**
 
 ```text
 fix(checkout): resolve multiple bugs on the checkout page
@@ -97,15 +97,15 @@ fix(checkout): resolve multiple bugs on the checkout page
 **Footer**
 The `footer` is optional and is used to link **Issues** or **mark breaking changes**. Each footer should have a token, followed by a subject, and end with a newline.
 
-- **Purpose**: Provide structured metadata, such as Issue references.
-- **Format**: The footer should start after a blank line following the body.
+- **Purpose:** Provide structured metadata, such as Issue references.
+- **Format:** The footer should start after a blank line following the body.
 
-**Common Uses**:
+**Common Uses:**
 
-- **Referencing Issues**: Used to associate the commit with the Issues it fixes or relates to.
-  **Example**: `Close #123`
-- **Breaking Changes**: You can also add `BREAKING CHANGE:` at the end of the commit description to provide more detailed information.
-  **Example**:
+- **Referencing Issues:** Used to associate the commit with the Issues it fixes or relates to.
+  **Example:** `Close #123`
+- **Breaking Changes:** You can also add `BREAKING CHANGE:` at the end of the commit description to provide more detailed information.
+  **Example:**
 
   ```text
   refactor!: correct password validation logicThis
@@ -135,13 +135,13 @@ The PR title must follow the **Conventional Commits** specification so that auto
 - `<subject>`: Briefly describes the content of the change.
 - `(#<issue number>)`: Clearly links to the relevant Issue.
 
-**Example: `feat(auth): add user login feature (#123)`**
+**Example:** `feat(auth): add user login feature (#123)`
 
 In the PR description, please detail:
 
-- **Relevant Issue Number**: Link to the related issue, e.g., `Closes #123`.
-- **Summary of Changes**: A brief summary of what was changed.
-- **Testing Information**: A description of how you tested your changes.
+- **Relevant Issue Number:** Link to the related issue, e.g., `Closes #123`.
+- **Summary of Changes:** A brief summary of what was changed.
+- **Testing Information:** A description of how you tested your changes.
 
 At least one reviewer must approve your pull request before it can be merged.
 
