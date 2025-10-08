@@ -37,6 +37,7 @@ Podfile.lock
 *.xcodeproj
 *.xcworkspace
 *.xcuserdatad
+Secrets-*.xcconfig
 
 # Node.js Dependencies
 /node_modules/
@@ -52,3 +53,7 @@ npm-debug.log*
 # Add it only if you have it in your project
 .npmrc
 .nvmrc
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
