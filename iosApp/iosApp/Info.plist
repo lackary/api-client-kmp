@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- KMPAuth request -->
 	<key>GIDClientID</key>
 	<string>$(GOOGLE_CLIENT_ID)</string>
 	<key>CFBundleURLTypes</key>
@@ -9,6 +10,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
+                <!-- KMPAuth request -->
 				<string>$(REVERSE_CLIENT_ID)</string>
 			</array>
 		</dict>

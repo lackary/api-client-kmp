@@ -34,9 +34,10 @@ captures/
 Pods/
 *.podspec.json
 Podfile.lock
-*.xcodeproj
 *.xcworkspace
 *.xcuserdatad
+xcuserdata/
+DerivedData/
 Secrets-*.xcconfig
 
 # Node.js Dependencies
@@ -53,7 +54,3 @@ npm-debug.log*
 # Add it only if you have it in your project
 .npmrc
 .nvmrc
-
-# Firebase
-google-services.json
-GoogleService-Info.plist

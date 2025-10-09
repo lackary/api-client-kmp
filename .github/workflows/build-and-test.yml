@@ -75,17 +75,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Resolve Swift Package Manager Dependencies
-        working-directory: './iosApp'
-          # Execute a basic Xcode build command to download, parse, and prepare SPM dependencies.
-          # Use '-target' or '-scheme' to specify your main application target/scheme.
-          # Typically, the target/scheme name is the same as your iOS application folder name (e.g., iosApp).
-          # The '-resolvePackageDependencies' command instructs Xcode to download all SPM dependencies.
-          # This command makes Xcode download all SPM dependencies.
-        run: |
-          echo "Resolving SPM dependencies via xcodebuild..."
-          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
-
 #      - name: Cache Gradle packages
 #        uses: actions/cache@v3
 #        with:
@@ -99,14 +88,36 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Create google-services.json
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
-        # Ensure the target directory exists
-        # Decode the string using base64 --decode and write it to the file
+      - name: Create Dynamic Secrets XConfig File
+        working-directory: './iosApp/Configuration'
+        # Create your .xconfig file (the name must match what Xcode expects to read)
+        # Write GIDClientID (corresponding to CLIENT_ID)
+        # Write CFBundleURLSchemes (corresponding to REVERSED_CLIENT_ID)
         run: |
-          mkdir -p composeApp
-          echo $GOOGLE_SERVICES_JSON | base64 -d > composeApp/google-services.json
+          XCONFIG_DEBUG_FILENAME="Secrets-Debug.xconfig"
+          XCONFIG_RELEASE_FILENAME="Secrets-Release.xconfig"
+
+          echo "======================================"
+          echo "Creating ${XCONFIG_DEBUG_FILENAME} in CI..."
+          echo "Creating ${XCONFIG_RELEASE_FILENAME} in CI..."
+          
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > "${XCONFIG_DEBUG_FILENAME}"
+          echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_DEBUG_FILENAME}"
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > "${XCONFIG_RELEASE_FILENAME}"
+          echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_RELEASE_FILENAME}"
+          
+          echo "======================================"
+
+      - name: Resolve Swift Package Manager Dependencies
+        working-directory: './iosApp'
+          # Execute a basic Xcode build command to download, parse, and prepare SPM dependencies.
+          # Use '-target' or '-scheme' to specify your main application target/scheme.
+          # Typically, the target/scheme name is the same as your iOS application folder name (e.g., iosApp).
+          # The '-resolvePackageDependencies' command instructs Xcode to download all SPM dependencies.
+        # This command makes Xcode download all SPM dependencies.
+        run: |
+          echo "Resolving SPM dependencies via xcodebuild..."
+          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
 
       - name: Build and test entire project
         env:
