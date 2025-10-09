@@ -1,7 +1,7 @@
 package io.lackstudio.module.kmp.apiclient.app
 
 import androidx.compose.ui.window.ComposeUIViewController
-import io.lackstudio.module.kmp.apiclient.app.di.presentationModule
+import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
 import io.lackstudio.module.kmp.apiclient.app.ui.screen.App
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
@@ -15,7 +15,7 @@ fun MainViewController(): UIViewController {
         allModules = listOf(
             appLoggerModule(appPlatformLogWriter()),
             unsplashModule,
-            presentationModule
+            viewModelModule
         )
     )
     return ComposeUIViewController { App() }

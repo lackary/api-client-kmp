@@ -2,7 +2,7 @@ package io.lackstudio.module.kmp.apiclient.app
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import io.lackstudio.module.kmp.apiclient.app.di.presentationModule
+import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
 import io.lackstudio.module.kmp.apiclient.app.ui.screen.App
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
@@ -14,7 +14,7 @@ fun main() = application {
         allModules = listOf(
             appLoggerModule(appPlatformLogWriter()),
             unsplashModule,
-            presentationModule
+            viewModelModule
         )
     )
     Window(

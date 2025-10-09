@@ -9,7 +9,9 @@ import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
     private val appLogger: AppLogger by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)

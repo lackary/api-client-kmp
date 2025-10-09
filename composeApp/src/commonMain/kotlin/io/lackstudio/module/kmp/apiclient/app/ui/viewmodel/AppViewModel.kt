@@ -1,10 +1,12 @@
 package io.lackstudio.module.kmp.apiclient.app.ui.viewmodel
 
 import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
+import io.lackstudio.module.kmp.apiclient.ui.common.utils.openBrowser
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import io.lackstudio.module.kmp.apiclient.ui.viewmodel.BaseViewModel
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhoto
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.GetPhotosUseCase
+import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,5 +26,4 @@ class AppViewModel(
             useCase = {getPhotosUseCase.invoke(page=1, perPage=10)},
         )
     }
-
 }

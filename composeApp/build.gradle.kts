@@ -12,7 +12,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.compose.hot.reload)
+    alias(libs.plugins.compose.hotReload)
+    alias(libs.plugins.gms.google.services)
 }
 
 kotlin {
@@ -31,7 +32,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -41,6 +41,7 @@ kotlin {
         }
     }
 
+    // desktop
     jvm()
 
     sourceSets {
@@ -52,9 +53,12 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.kmp.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.kmp.androidx.lifecycle.runtimeCompose)
             implementation(libs.koin.compose)
+            implementation(libs.mirzemehdi.kmpauthGoogle)
+            implementation(libs.mirzemehdi.kmpauthFirebase)
+            implementation(libs.mirzemehdi.kmpauthUihelper)
             implementation(projects.modules.unsplashApiClient)
             implementation(projects.modules.core)
             implementation(projects.modules.ui)
@@ -65,29 +69,21 @@ kotlin {
             implementation(libs.koin.test)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
-
         }
 
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.activityCompose)
         }
-
         androidUnitTest.dependencies {  }
-
         androidInstrumentedTest.dependencies {  }
 
-        iosMain.dependencies {
-
-        }
-        iosTest.dependencies {
-
-        }
+        iosMain.dependencies {  }
+        iosTest.dependencies {  }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-
+            implementation(libs.kotlinx.coroutinesSwing)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
@@ -139,3 +135,22 @@ compose.desktop {
         }
     }
 }
+
+tasks.withType<Test>().configureEach {
+    // Check if the 'skip.tests' property is passed from the command line
+    // If this property exists, onlyIf returns false, and the tests will be skipped (SKIPPED)
+    onlyIf { !project.hasProperty("skip.tests") }
+}
+
+//// For special test tasks on the Android platform (connectedAndroidTest/instrumentation tests)
+//// They might not be of the `Test` type, but rather `DeviceProviderInstrumentTestTask` or other specific types.
+//// To ensure more comprehensive coverage, we need to find them and apply the same logic.
+//// Although they are not necessarily all of the Test type, it's safer to cover them with withName:
+//tasks.configureEach {
+//    if (name.contains("AndroidTest", ignoreCase = true) ||
+//        name.contains("Test", ignoreCase = true)
+//    ) {
+//        // Use onlyIf to apply the skip logic
+//        onlyIf { !project.hasProperty("skip.tests") }
+//    }
+//}
