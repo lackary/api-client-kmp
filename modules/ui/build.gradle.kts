@@ -39,7 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.androidx.lifecycle.viewmodel.compose)
+            api(libs.kmp.androidx.lifecycle.viewmodelCompose)
             implementation(projects.modules.core)
         }
         commonTest.dependencies {
