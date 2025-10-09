@@ -75,6 +75,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Resolve Swift Package Manager Dependencies
+        working-directory: './iosApp'
+          # Execute a basic Xcode build command to download, parse, and prepare SPM dependencies.
+          # Use '-target' or '-scheme' to specify your main application target/scheme.
+          # Typically, the target/scheme name is the same as your iOS application folder name (e.g., iosApp).
+          # The '-resolvePackageDependencies' command instructs Xcode to download all SPM dependencies.
+          # This command makes Xcode download all SPM dependencies.
+        run: |
+          echo "Resolving SPM dependencies via xcodebuild..."
+          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
+
 #      - name: Cache Gradle packages
 #        uses: actions/cache@v3
 #        with:
