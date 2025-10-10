@@ -140,10 +140,23 @@ jobs:
               -sdk iphonesimulator \
               -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" 
 
-      - name: Build and test entire project
+      - name: Build and test entire project (With Explicit Build Path)
         # -Pskip.tests
         # Because the test APIs of Compose Multiplatform is still Experimental.
-        run: ./gradlew build -Pskip.tests ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+        run: |
+          XCODE_BUILD_DIR=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -configuration Debug -sdk iphonesimulator -showBuildSettings | grep "BUILD_ROOT" | awk '{print $3}')
+          if [ -z "$XCODE_BUILD_DIR" ]; then
+              echo "Warning: Could not resolve Xcode BUILD_ROOT. Using default DerivedData path."
+              XCODE_BUILD_DIR="${HOME}/Library/Developer/Xcode/DerivedData/iosApp-*/Build/Products/Debug-iphonesimulator"
+          fi
+
+          ./gradlew build \
+              -Pskip.tests \
+              -PiosFrameworkSearchPath="$XCODE_BUILD_DIR" \
+              ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
+              ${{ inputs.run_with_info && '--info' || '' }} \
+              ${{ inputs.run_with_debug && '--debug' || '' }} \
+              ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
 
       - name: Upload Test Report
         if: always()
