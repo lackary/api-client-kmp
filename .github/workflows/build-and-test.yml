@@ -99,7 +99,6 @@ jobs:
           XCONFIG_DEBUG_FILENAME="Secrets-Debug.xconfig"
           XCONFIG_RELEASE_FILENAME="Secrets-Release.xconfig"
 
-          echo "======================================"
           echo "Creating ${XCONFIG_DEBUG_FILENAME} in CI..."
           echo "Creating ${XCONFIG_RELEASE_FILENAME} in CI..."
           
@@ -107,8 +106,12 @@ jobs:
           echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_DEBUG_FILENAME}"
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > "${XCONFIG_RELEASE_FILENAME}"
           echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_RELEASE_FILENAME}"
-          
-          echo "======================================"
+
+      - name: Create gradle.properties
+        run: |
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "org.gradle.caching=true" >> gradle.properties
+          echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
 
       - name: Resolve Swift Package Manager Dependencies
         working-directory: './iosApp'
@@ -139,7 +142,7 @@ jobs:
       - name: Build and test entire project
         # -Pskip.tests
         # Because the test APIs of Compose Multiplatform is still Experimental.
-        run: ./gradlew build -Pskip.tests -Pandroid.useAndroidX=true -Porg.gradle.caching=true -Dorg.gradle.jvmargs=-Xmx8192M ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+        run: ./gradlew build -Pskip.tests ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} ${{ inputs.run_with_info && '--info' || '' }} ${{ inputs.run_with_debug && '--debug' || '' }} ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
 
       - name: Upload Test Report
         if: always()
