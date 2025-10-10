@@ -122,16 +122,19 @@ jobs:
         run: |
           echo "Resolving SPM dependencies via xcodebuild..."
           xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
-          
-          echo "2. Building iOS Target to set environment variables..."
+
+      - name: Xcode Clean Build
+        working-directory: './iosApp'
+        # Perform a Clean Build targeting the iOS simulator.
+        # This step generates the build output path for SPM dependencies.
+        run: |
+          echo "Building iOS Target to set environment variables..."
           xcodebuild clean build \
               -project "iosApp.xcodeproj" \
               -scheme "iosApp" \
               -configuration "Debug" \
               -sdk iphonesimulator \
               -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" 
-          
-          echo "SPM dependencies built and output path set."
 
       - name: Build and test entire project
         # -Pskip.tests
