@@ -112,26 +112,27 @@ jobs:
           echo "android.useAndroidX=true" >> gradle.properties
           echo "org.gradle.caching=true" >> gradle.properties
           echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
+          echo "kotlin.native.cacheKind.iosSimulatorArm64=none" >> gradle.properties
 
-      - name: Resolve Swift Package Manager Dependencies
-        working-directory: './iosApp'
-        # Execute a basic Xcode build command to download, parse, and prepare SPM dependencies.
-        # Use '-target' or '-scheme' to specify your main application target/scheme.
-        # Typically, the target/scheme name is the same as your iOS application folder name (e.g., iosApp).
-        # The '-resolvePackageDependencies' command instructs Xcode to download all SPM dependencies.
-        # This command makes Xcode download all SPM dependencies.
-        # Perform a Clean Build targeting the iOS simulator.
-        # This step generates the build output path for SPM dependencies.
-        run: |
-          echo "Resolving SPM dependencies via xcodebuild..."
-          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
+#      - name: Resolve Swift Package Manager Dependencies
+#        working-directory: './iosApp'
+#        # Execute a basic Xcode build command to download, parse, and prepare SPM dependencies.
+#        # Use '-target' or '-scheme' to specify your main application target/scheme.
+#        # Typically, the target/scheme name is the same as your iOS application folder name (e.g., iosApp).
+#        # The '-resolvePackageDependencies' command instructs Xcode to download all SPM dependencies.
+#        # This command makes Xcode download all SPM dependencies.
+#        # Perform a Clean Build targeting the iOS simulator.
+#        # This step generates the build output path for SPM dependencies.
+#        run: |
+#          echo "Resolving SPM dependencies via xcodebuild..."
+#          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
 
-      - name: Xcode Clean Build
+      - name: Pre-build iOS Target to generate SPM Frameworks
         working-directory: './iosApp'
-        # Perform a Clean Build targeting the iOS simulator.
-        # This step generates the build output path for SPM dependencies.
+        # The xcodebuild clean build command forces the compilation of SPM dependencies
+        # and sets environment variables like BUILT_PRODUCTS_DIR.
         run: |
-          echo "Building iOS Target to set environment variables..."
+          echo "Resolving SPM dependencies and generating Frameworks..."
           xcodebuild clean build \
               -project "iosApp.xcodeproj" \
               -scheme "iosApp" \
