@@ -127,32 +127,60 @@ jobs:
 #          echo "Resolving SPM dependencies via xcodebuild..."
 #          xcodebuild -resolvePackageDependencies -project "iosApp.xcodeproj" -scheme "iosApp"
 
-      - name: Pre-build iOS Target to generate SPM Frameworks
-        working-directory: './iosApp'
-        # The xcodebuild clean build command forces the compilation of SPM dependencies
-        # and sets environment variables like BUILT_PRODUCTS_DIR.
+#      - name: Pre-build iOS Target to generate SPM Frameworks
+#        working-directory: './iosApp'
+#        # The xcodebuild clean build command forces the compilation of SPM dependencies
+#        # and sets environment variables like BUILT_PRODUCTS_DIR.
+#        run: |
+#          echo "Resolving SPM dependencies and generating Frameworks..."
+#          xcodebuild clean build \
+#              -project "iosApp.xcodeproj" \
+#              -scheme "iosApp" \
+#              -configuration "Debug" \
+#              -sdk iphonesimulator \
+#              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max"
+
+      - name: Gradle Build to Generate KMP Framework
+        # Run assemble to ensure all targets (including the iOS framework) are compiled
         run: |
-          echo "Resolving SPM dependencies and generating Frameworks..."
+          ./gradlew assemble \
+              -Pskip.tests \
+              ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
+              ${{ inputs.run_with_info && '--info' || '' }} \
+              ${{ inputs.run_with_debug && '--debug' || '' }} \
+              ${{ inputs.enable_kotlin_daemon && '-Pkotlin.native.enableDaemon=true' || '' }}
+
+      - name: Generate Dummy Framework for CocoaPods
+        run: ./gradlew :composeApp:generateDummyFramework
+
+      - name: Install CocoaPods Dependencies
+        # Make sure you have a Podfile in your iosApp directory
+        # Use `gem install cocoapods` to ensure the CocoaPods environment is available
+        # Run `pod install`, which will generate the Pods/ directory and the .xcworkspace file
+        working-directory: './iosApp'
+        run: |
+          echo "Installing CocoaPods dependencies..."
+          gem install cocoapods 
+          pod install
+
+      - name: Xcode Build (clean build .xcworkspace)
+        working-directory: './iosApp'
+        run: |
+          echo "Building iOS target via .xcworkspace..."
           xcodebuild clean build \
-              -project "iosApp.xcodeproj" \
+              -workspace "iosApp.xcworkspace" \
               -scheme "iosApp" \
               -configuration "Debug" \
               -sdk iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" 
+              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" \
+              ENABLE_PREVIEWS=NO
 
-      - name: Build and test entire project (With Explicit Build Path)
+      - name: Run KMP Unit Tests
         # -Pskip.tests
         # Because the test APIs of Compose Multiplatform is still Experimental.
         run: |
-          XCODE_BUILD_DIR=$(xcodebuild -workspace iosApp.xcworkspace -scheme iosApp -configuration Debug -sdk iphonesimulator -showBuildSettings | grep "BUILD_ROOT" | awk '{print $3}')
-          if [ -z "$XCODE_BUILD_DIR" ]; then
-              echo "Warning: Could not resolve Xcode BUILD_ROOT. Using default DerivedData path."
-              XCODE_BUILD_DIR="${HOME}/Library/Developer/Xcode/DerivedData/iosApp-*/Build/Products/Debug-iphonesimulator"
-          fi
-
-          ./gradlew build \
+          ./gradlew check \
               -Pskip.tests \
-              -PiosFrameworkSearchPath="$XCODE_BUILD_DIR" \
               ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
               ${{ inputs.run_with_info && '--info' || '' }} \
               ${{ inputs.run_with_debug && '--debug' || '' }} \

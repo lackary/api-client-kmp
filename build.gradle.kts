@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.devtool.ksp) apply false
     alias(libs.plugins.gms.google.services) apply false
+    alias(libs.plugins.kotlin.native.cocoapods) apply false
 }
 
 subprojects {

@@ -33,7 +33,6 @@ captures/
 # iOS/CocoaPods
 Pods/
 *.podspec.json
-Podfile.lock
 *.xcworkspace
 *.xcuserdatad
 xcuserdata/

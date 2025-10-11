@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.compose.hotReload)
     alias(libs.plugins.gms.google.services)
+    alias(libs.plugins.kotlin.native.cocoapods)
 }
 
 kotlin {
@@ -24,21 +25,66 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
 
-        dependencies {
-            debugImplementation(compose.uiTooling)
-            androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-            debugImplementation(libs.androidx.compose.ui.test.mainfest)
-        }
+//        dependencies {
+//            debugImplementation(compose.uiTooling)
+//            androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+//            debugImplementation(libs.androidx.compose.ui.test.mainfest)
+//        }
     }
 
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+//    listOf(
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+//    }
+
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        name = "ComposeApp"
+        version = "1.0.0" // Or any valid version number
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "18.5" // Specify your iOS deployment target
+//        podfile = project.file("../iosApp/Podfile") // Adjust path if needed
+        framework {
             baseName = "ComposeApp"
             isStatic = true
         }
+
+        /**
+         * The necessary Firebase pods are already managed by the 'libs.mirzemehdi.kmpauthFirebase' library.
+         * Do NOT uncomment the pod definitions below.
+         *
+         * Doing so will cause a "symbol multiply defined" build error after a clean build,
+         * because the dependencies would be included twice.
+         *
+         * However, these pods are still required for the native iOS app to function correctly.
+         * You MUST manually add them to your `iosApp/Podfile`.
+         *
+         * Example for your Podfile:
+         * pod 'FirebaseCore', '~> 12.4.0'
+         * pod 'FirebaseAuth', '~> 12.4.0'
+         * pod 'GoogleSignIn', '~> 9.0.0'
+         */
+//        pod("FirebaseCore") {
+//            version = "~> 12.4.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+//        pod("FirebaseAuth") {
+//            version = "~> 12.4.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+//        pod("GoogleSignIn") {
+//            version = "~> 9.0.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+
     }
 
     // desktop
@@ -122,6 +168,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {
