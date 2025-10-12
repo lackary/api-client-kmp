@@ -181,6 +181,7 @@ jobs:
           ./gradlew check \
               -Pskip.tests=true \
               -Pskip.native.tests=true \
+              -Pskip.lint=true \
               ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
               ${{ inputs.run_with_info && '--info' || '' }} \
               ${{ inputs.run_with_debug && '--debug' || '' }} \

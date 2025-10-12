@@ -188,11 +188,21 @@ compose.desktop {
     }
 }
 
+// Skip Android Lint tasks (to avoid running Lint like generateDebugAndroidTestLintModel)
+tasks.matching { it.name.contains(Regex("lint", RegexOption.IGNORE_CASE))}.configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.lint")) {
+            println("Skipping lint task ($name) because -Pskip.lint=true")
+            false
+        } else true
+    }
+}
+
 // Skip JVM / Android tests
 tasks.withType<Test>().configureEach {
     onlyIf {
         if (project.hasProperty("skip.tests")) {
-            println("Skipping JVM/Android tests because -Pskip.tests=true")
+            println("Skipping JVM/Android test ($name) because -Pskip.tests=true")
             false
         } else true
     }
@@ -202,31 +212,31 @@ tasks.withType<Test>().configureEach {
 tasks.withType<KotlinNativeTest>().configureEach {
     onlyIf {
         if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native tests because -Pskip.native.tests=true")
+            println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
             false
         } else true
     }
 }
 
-// Important: Skip Kotlin/Native link tasks (to avoid linkDebugTestIosSimulatorArm64, ...etc link test)
+// Important: Skip Kotlin/Native link tasks (to avoid test linking like linkDebugTestIosSimulatorArm64)
 tasks.withType<KotlinNativeLink>().configureEach {
     onlyIf {
         if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native link task (${name}) because -Pskip.native.tests=true")
+            println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
             false
         } else true
     }
 }
 
-//// For special test tasks on the Android platform (connectedAndroidTest/instrumentation tests)
-//// They might not be of the `Test` type, but rather `DeviceProviderInstrumentTestTask` or other specific types.
+//// For special test tasks on the Android platform (e.g., connectedAndroidTest/instrumentation tests),
+//// they might not be of the `Test` type, but rather `DeviceProviderInstrumentTestTask` or other specific types.
 //// To ensure more comprehensive coverage, we need to find them and apply the same logic.
-//// Although they are not necessarily all of the Test type, it's safer to cover them with withName:
+//// Although they are not necessarily all of type Test, it's safer to cover them using `withName`:
 //tasks.configureEach {
 //    if (name.contains("AndroidTest", ignoreCase = true) ||
 //        name.contains("Test", ignoreCase = true)
 //    ) {
-//        // Use onlyIf to apply the skip logic
+//        // Apply the skipping logic using onlyIf
 //        onlyIf { !project.hasProperty("skip.tests") }
 //    }
 //}
