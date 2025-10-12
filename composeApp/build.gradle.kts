@@ -6,13 +6,17 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.compose.hot.reload)
+    alias(libs.plugins.compose.hotReload)
+    alias(libs.plugins.gms.google.services)
+    alias(libs.plugins.kotlin.native.cocoapods)
 }
 
 kotlin {
@@ -23,24 +27,69 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
 
-        dependencies {
-            debugImplementation(compose.uiTooling)
-            androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-            debugImplementation(libs.androidx.compose.ui.test.mainfest)
-        }
+//        dependencies {
+//            debugImplementation(compose.uiTooling)
+//            androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+//            debugImplementation(libs.androidx.compose.ui.test.mainfest)
+//        }
     }
 
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+//    listOf(
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+//    }
+
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        name = "ComposeApp"
+        version = "1.0.0" // Or any valid version number
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        ios.deploymentTarget = "18.5" // Specify your iOS deployment target
+//        podfile = project.file("../iosApp/Podfile") // Adjust path if needed
+        framework {
             baseName = "ComposeApp"
             isStatic = true
         }
+
+        /**
+         * The necessary Firebase pods are already managed by the 'libs.mirzemehdi.kmpauthFirebase' library.
+         * Do NOT uncomment the pod definitions below.
+         *
+         * Doing so will cause a "symbol multiply defined" build error after a clean build,
+         * because the dependencies would be included twice.
+         *
+         * However, these pods are still required for the native iOS app to function correctly.
+         * You MUST manually add them to your `iosApp/Podfile`.
+         *
+         * Example for your Podfile:
+         * pod 'FirebaseCore', '~> 12.4.0'
+         * pod 'FirebaseAuth', '~> 12.4.0'
+         * pod 'GoogleSignIn', '~> 9.0.0'
+         */
+//        pod("FirebaseCore") {
+//            version = "~> 12.4.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+//        pod("FirebaseAuth") {
+//            version = "~> 12.4.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+//        pod("GoogleSignIn") {
+//            version = "~> 9.0.0"
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
+
     }
 
+    // desktop
     jvm()
 
     sourceSets {
@@ -52,9 +101,12 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.kmp.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.kmp.androidx.lifecycle.runtimeCompose)
             implementation(libs.koin.compose)
+            implementation(libs.mirzemehdi.kmpauthGoogle)
+            implementation(libs.mirzemehdi.kmpauthFirebase)
+            implementation(libs.mirzemehdi.kmpauthUihelper)
             implementation(projects.modules.unsplashApiClient)
             implementation(projects.modules.core)
             implementation(projects.modules.ui)
@@ -65,29 +117,21 @@ kotlin {
             implementation(libs.koin.test)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
-
         }
 
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.activityCompose)
         }
-
         androidUnitTest.dependencies {  }
-
         androidInstrumentedTest.dependencies {  }
 
-        iosMain.dependencies {
-
-        }
-        iosTest.dependencies {
-
-        }
+        iosMain.dependencies {  }
+        iosTest.dependencies {  }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-
+            implementation(libs.kotlinx.coroutinesSwing)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)
@@ -128,6 +172,10 @@ android {
     }
 }
 
+dependencies {
+    debugImplementation(compose.uiTooling)
+}
+
 compose.desktop {
     application {
         mainClass = "io.lackstudio.module.kmp.apiclient.app.MainKt"
@@ -139,3 +187,56 @@ compose.desktop {
         }
     }
 }
+
+// Skip Android Lint tasks (to avoid running Lint like generateDebugAndroidTestLintModel)
+tasks.matching { it.name.contains(Regex("lint", RegexOption.IGNORE_CASE))}.configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.lint")) {
+            println("Skipping lint task ($name) because -Pskip.lint=true")
+            false
+        } else true
+    }
+}
+
+// Skip JVM / Android tests
+tasks.withType<Test>().configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.tests")) {
+            println("Skipping JVM/Android test ($name) because -Pskip.tests=true")
+            false
+        } else true
+    }
+}
+
+// Skip Kotlin/Native tests
+tasks.withType<KotlinNativeTest>().configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.native.tests")) {
+            println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
+            false
+        } else true
+    }
+}
+
+// Important: Skip Kotlin/Native link tasks (to avoid test linking like linkDebugTestIosSimulatorArm64)
+tasks.withType<KotlinNativeLink>().configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.native.tests")) {
+            println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
+            false
+        } else true
+    }
+}
+
+//// For special test tasks on the Android platform (e.g., connectedAndroidTest/instrumentation tests),
+//// they might not be of the `Test` type, but rather `DeviceProviderInstrumentTestTask` or other specific types.
+//// To ensure more comprehensive coverage, we need to find them and apply the same logic.
+//// Although they are not necessarily all of type Test, it's safer to cover them using `withName`:
+//tasks.configureEach {
+//    if (name.contains("AndroidTest", ignoreCase = true) ||
+//        name.contains("Test", ignoreCase = true)
+//    ) {
+//        // Apply the skipping logic using onlyIf
+//        onlyIf { !project.hasProperty("skip.tests") }
+//    }
+//}

@@ -33,10 +33,11 @@ captures/
 # iOS/CocoaPods
 Pods/
 *.podspec.json
-Podfile.lock
-*.xcodeproj
 *.xcworkspace
 *.xcuserdatad
+xcuserdata/
+DerivedData/
+Secrets-*.xcconfig
 
 # Node.js Dependencies
 /node_modules/

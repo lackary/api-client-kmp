@@ -1,7 +1,8 @@
 package io.lackstudio.module.kmp.apiclient.app
 
 import android.app.Application
-import io.lackstudio.module.kmp.apiclient.app.di.presentationModule
+import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
+import io.lackstudio.module.kmp.apiclient.app.helper.AppInitializer
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.core.di.initializeKoin
@@ -15,8 +16,11 @@ class ExampleApplication : Application() {
             allModules = listOf(
                 appLoggerModule(appPlatformLogWriter()),
                 unsplashModule,
-                presentationModule
+                viewModelModule,
             )
         )
+
+        AppInitializer.onApplicationStart(applicationContext.getString(R.string.default_web_client_id))
+
     }
 }

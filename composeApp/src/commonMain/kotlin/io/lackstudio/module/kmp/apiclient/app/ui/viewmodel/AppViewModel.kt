@@ -24,5 +24,4 @@ class AppViewModel(
             useCase = {getPhotosUseCase.invoke(page=1, perPage=10)},
         )
     }
-
 }

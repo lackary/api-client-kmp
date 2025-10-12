@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>684238220012-0meagjedcu49audsrjv1pibk2tjcv1oq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.684238220012-0meagjedcu49audsrjv1pibk2tjcv1oq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>684238220012-tleqk53r0ondld15j6uh4lf10tasap0n.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCEFEgbhzI_UZCbqy3_RGeg_YtrF6s1h8g</string>
+	<key>GCM_SENDER_ID</key>
+	<string>684238220012</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>io.lackstudio.module.kmp.apiclient.app</string>
+	<key>PROJECT_ID</key>
+	<string>omnifeed-prod</string>
+	<key>STORAGE_BUCKET</key>
+	<string>omnifeed-prod.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:684238220012:ios:0f7706789286ddc76753c9</string>
+</dict>
+</plist>

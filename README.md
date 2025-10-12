@@ -2,47 +2,6 @@
 
 Kotlin Multiplatform (KMP) library project for API clients, using Ktor for networking and Koin for dependency injection.
 
-## Structure
-
-```tree
-shared/
-├── build.gradle.kts
-├── core/
-│     └── build.gradle.kts
-├── network/
-│     └── build.gradle.kts
-├── common-models/
-│     └── build.gradle.kts
-│
-├── news-api-client/
-│     ├── build.gradle.kts
-│     └── src/commonMain/
-│     ├── data/
-│     │     ├── api/
-│     │     ├── repository/
-│     │     └── model/
-│     ├── domain/
-│     │     ├── repository/
-│     │     ├── model/
-│     │     └── usecase/
-│     └── di/
-│     └── NewsApiClientModule.kt
-│
-├── unsplash/
-│     ├── build.gradle.kts
-│     └── src/commonMain/
-│           ├── data/
-│           │     ├── api/
-│           │     ├── repository/
-│           │     └── model/
-│           ├── domain/
-│           │     ├── repository/
-│           │     ├── model/
-│           │     └── usecase/
-│           └── di/
-│           └── UnsplashApiClientModule.kt
-```
-
 Each API client module is independently usable as a dependency in different apps.
 
 ## Kotlin Multiplatform Library Usage Guide
@@ -164,3 +123,58 @@ This project is a Kotlin Multiplatform Library. Below are instructions for impor
 
 - If you change the library source, you must re-run `publishToMavenLocal` to update the local maven repository.
 - Adjust groupId, artifactId, and version according to your actual project settings.
+
+## KMPAuth Integration Guide (iOS - Google Sign-In)
+
+This guide explains how to set up Google Sign-In on iOS using KMPAuth.
+
+### 1. Prerequisites
+
+Before you begin, follow the KMPAuth documentation to set up your Firebase project and download the necessary configuration files:
+
+- `GoogleService-Info.plist` (for the iOS app)
+
+Place `GoogleService-Info.plist` in the `iosApp/` directory of your project.
+
+### 2. Create Secret Configuration Files
+
+To manage your API keys and client IDs securely, create two configuration files in the `iosApp/Configuration/` directory.
+
+**`Secrets-Debug.xcconfig`**
+
+```xcconfig
+GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"
+REVERSE_CLIENT_ID = "YOUR_REVERSE_CLIENT_ID"
+```
+
+**`Secrets-Release.xcconfig`**
+
+```xcconfig
+GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"
+REVERSE_CLIENT_ID = "YOUR_REVERSE_CLIENT_ID"
+```
+
+> **Note:** Replace the placeholder values with your actual credentials. You can find `GOOGLE_CLIENT_ID` and `REVERSE_CLIENT_ID` inside your `GoogleService-Info.plist` file. `GOOGLE_SERVER_CLIENT_ID` is the web client ID, used for backend authentication.
+
+### 3. Configure Xcode Project
+
+Follow these steps to link the `.xcconfig` files and make the values available in your `Info.plist`.
+
+#### Link xcconfig Files to Build Configurations
+
+1. In Xcode, select your project file (`iosApp`) in the Project Navigator to open the project settings.
+2. In the central editor pane, ensure you select the **PROJECT** (`iosApp`), not a target from the `TARGETS` list.
+3. Navigate to the **Info** tab.
+4. Under the **Configurations** section, you will see `Debug` and `Release`.
+5. For the `Debug` configuration row, choose `Secrets-Debug` from the dropdown menu under the "Based on Configuration File" column.
+6. For the `Release` configuration row, choose `Secrets-Release`. Targets will inherit these settings.
+
+#### Read Values in Info.plist
+
+1. Select the `iosApp` **target**.
+2. Go to the **Info** tab.
+3. Expand **URL Types**.
+4. Click the `+` button to add a new URL Type.
+5. In the **URL Schemes** field for the new type, enter `$(REVERSE_CLIENT_ID)`. The `$` notation tells Xcode to substitute the value from your `.xcconfig` file at build time.
+
+This setup ensures that your sensitive keys are kept out of source control and are correctly configured for both debug and release builds.

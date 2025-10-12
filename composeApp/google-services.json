@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "684238220012",
+    "project_id": "omnifeed-prod",
+    "storage_bucket": "omnifeed-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684238220012:android:0010df2fd0ae42bb6753c9",
+        "android_client_info": {
+          "package_name": "io.lackstudio.module.kmp.apiclient.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684238220012-tleqk53r0ondld15j6uh4lf10tasap0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.lackstudio.module.kmp.apiclient.app",
+            "certificate_hash": "44c4bddc5c290f40f847ebb694aef04adf3b9b4f"
+          }
+        },
+        {
+          "client_id": "684238220012-60sloh497vlmugbnet62tq273o18vafn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgZvTa6YCa5RMrcN91MzTF_S7ag-Nsy74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "684238220012-60sloh497vlmugbnet62tq273o18vafn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "684238220012-0meagjedcu49audsrjv1pibk2tjcv1oq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.lackstudio.module.kmp.apiclient.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,7 @@
 package io.lackstudio.module.kmp.apiclient.app.ui.screen
 
 import androidx.compose.ui.test.*
-import io.lackstudio.module.kmp.apiclient.app.di.presentationModule
+import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
@@ -29,7 +29,7 @@ class AppTest : KoinTest {
                 listOf(
                     appLoggerModule(appPlatformLogWriter()),
                     unsplashModule,
-                    presentationModule
+                    viewModelModule
                 )
             )
         }
