@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -186,17 +188,33 @@ compose.desktop {
     }
 }
 
-// Skip JVM/Android
+// Skip JVM / Android tests
 tasks.withType<Test>().configureEach {
-    // Check if the 'skip.tests' property is passed from the command line
-    // If this property exists, onlyIf returns false, and the tests will be skipped (SKIPPED)
-    onlyIf { !project.hasProperty("skip.tests") }
+    onlyIf {
+        if (project.hasProperty("skip.tests")) {
+            println("Skipping JVM/Android tests because -Pskip.tests=true")
+            false
+        } else true
+    }
 }
 
-// Skip iOS/MacOs
-tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest>().configureEach {
+// Skip Kotlin/Native tests
+tasks.withType<KotlinNativeTest>().configureEach {
     onlyIf {
-        !project.hasProperty("skip.native.tests")
+        if (project.hasProperty("skip.native.tests")) {
+            println("Skipping Kotlin/Native tests because -Pskip.native.tests=true")
+            false
+        } else true
+    }
+}
+
+// Important: Skip Kotlin/Native link tasks (to avoid linkDebugTestIosSimulatorArm64, ...etc link test)
+tasks.withType<KotlinNativeLink>().configureEach {
+    onlyIf {
+        if (project.hasProperty("skip.native.tests")) {
+            println("Skipping Kotlin/Native link task (${name}) because -Pskip.native.tests=true")
+            false
+        } else true
     }
 }
 
