@@ -144,7 +144,6 @@ jobs:
         # Run assemble to ensure all targets (including the iOS framework) are compiled
         run: |
           ./gradlew assemble \
-              -Pskip.tests \
               ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
               ${{ inputs.run_with_info && '--info' || '' }} \
               ${{ inputs.run_with_debug && '--debug' || '' }} \
@@ -180,7 +179,8 @@ jobs:
         # Because the test APIs of Compose Multiplatform is still Experimental.
         run: |
           ./gradlew check \
-              -Pskip.tests \
+              -Pskip.tests=true \
+              -Pskip.native.tests=true \
               ${{ inputs.run_with_stacktrace && '--stacktrace' || '' }} \
               ${{ inputs.run_with_info && '--info' || '' }} \
               ${{ inputs.run_with_debug && '--debug' || '' }} \

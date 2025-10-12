@@ -186,10 +186,18 @@ compose.desktop {
     }
 }
 
+// Skip JVM/Android
 tasks.withType<Test>().configureEach {
     // Check if the 'skip.tests' property is passed from the command line
     // If this property exists, onlyIf returns false, and the tests will be skipped (SKIPPED)
     onlyIf { !project.hasProperty("skip.tests") }
+}
+
+// Skip iOS/MacOs
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest>().configureEach {
+    onlyIf {
+        !project.hasProperty("skip.native.tests")
+    }
 }
 
 //// For special test tasks on the Android platform (connectedAndroidTest/instrumentation tests)
