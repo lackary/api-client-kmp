@@ -1,3 +1,23 @@
+# [0.5.0](https://github.com/lackary/api-client-kmp/compare/0.4.0...0.5.0) (2025-10-12)
+
+
+### Bug Fixes
+
+* **build:** build failed in task ':composeApp:linkDebugTestIosSimulatorArm64' ([e60ff55](https://github.com/lackary/api-client-kmp/commit/e60ff5577843931d2f7c961083a635dfa48e7e48))
+* **build:** build failed without google-services.json ([a21ce31](https://github.com/lackary/api-client-kmp/commit/a21ce319b1bcc2a841fde83c68a85c052b9837b7))
+* **build:** fix build failed by Unresolved reference ([42aeb2d](https://github.com/lackary/api-client-kmp/commit/42aeb2d49579554bb8eef627dc0bfa4b44d52d33))
+* **ci:** build failed by ld invocation reported errors ([b01caa2](https://github.com/lackary/api-client-kmp/commit/b01caa24b8bafd5a4b4f183afd5e9c8057d9af58))
+* **ci:** build failed by link error ([49c8dd1](https://github.com/lackary/api-client-kmp/commit/49c8dd12bc9a94f53f1d044945f8841968c746fd))
+* **ci:** build failed in GitHub Action Build and Test [#23](https://github.com/lackary/api-client-kmp/issues/23) ([6fcfbf0](https://github.com/lackary/api-client-kmp/commit/6fcfbf0ef07222f49639687d042b552aba96b093))
+* **ci:** build failed in GitHub Action Build and Test [#25](https://github.com/lackary/api-client-kmp/issues/25) ([4aaef6a](https://github.com/lackary/api-client-kmp/commit/4aaef6acd93214dfe314265b1238abd49b4d74fb))
+* **ci:** build failed without turning on android.useAndroidX property ([f05895c](https://github.com/lackary/api-client-kmp/commit/f05895c3c838289b892096715f1ed85036a16033))
+* **ci:** build failed without UNSPLASH_API_KEY ([d48d356](https://github.com/lackary/api-client-kmp/commit/d48d356719d1f3b9094c337c53f0b5ff9c45f9ec))
+
+
+### Features
+
+* **auth:** add Google login with KMPAuth in Android and iOS ([ab86d6d](https://github.com/lackary/api-client-kmp/commit/ab86d6d80b0499be617c5745cbdec921b0e6e7a6))
+
 # [0.4.0](https://github.com/lackary/api-client-kmp/compare/0.3.0...0.4.0) (2025-09-22)
 
 
