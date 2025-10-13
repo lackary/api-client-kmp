@@ -178,3 +178,72 @@ Follow these steps to link the `.xcconfig` files and make the values available i
 5. In the **URL Schemes** field for the new type, enter `$(REVERSE_CLIENT_ID)`. The `$` notation tells Xcode to substitute the value from your `.xcconfig` file at build time.
 
 This setup ensures that your sensitive keys are kept out of source control and are correctly configured for both debug and release builds.
+
+---
+
+## Kotlin CocoaPods Dependency Manager Setup Guide
+
+This guide outlines the steps to set up a Kotlin Multiplatform project with CocoaPods for iOS development.
+
+### 1. Add Kotlin CocoaPods Dependency and Sync Gradle
+
+First, add the Kotlin CocoaPods plugin dependency to your `build.gradle.kts` file and sync the project with your Gradle files.
+
+```kotlin
+kotlin{
+   iosArm64()
+   iosSimulatorArm64()
+
+   cocoapods {
+      name = "ComposeApp"
+      version = "1.0.0" // Or any valid version number
+      summary = "Some description for the Shared Module"
+      homepage = "Link to the Shared Module homepage"
+      ios.deploymentTarget = "18.5" // Specify your iOS deployment target
+      podfile = project.file("../iosApp/Podfile") // Adjust path if needed
+      framework {
+         baseName = "ComposeApp"
+         isStatic = true
+      }
+   }
+}
+```
+
+### 2. Ensure a Dummy Framework Exists
+
+You need to have a dummy `*.framework` file that includes an empty header. This is a workaround to make CocoaPods recognize the Kotlin framework before it's actually built.
+
+### 3. Initialize Pods
+
+If you have CocoaPods installed, run `pod init` in your iOS project's root directory. This will create a `Podfile` where you can list your dependencies.
+
+```sh
+# Uncomment the next line to define a global platform for your project
+platform :ios, '18.5'
+
+target 'iosApp' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for iosApp
+  pod 'ComposeApp', :path => '../composeApp'
+  pod '${dependency_you_need}'
+
+end
+```
+
+### 4. Install Pods
+
+Run the following command to install the necessary libraries:
+
+```sh
+pod install --repo-update --clean-install
+```
+
+### 5. Open the Xcode Workspace
+
+Open the newly created `*.xcworkspace` file. This workspace contains your original project along with the installed Pods.
+
+### 6. Generate the Real Framework
+
+Finally, you can generate the real framework by building the project.
