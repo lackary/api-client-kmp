@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OAuth Redirect</title>
+    <style>
+        body {
+          font-family: system-ui, sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          margin: 0;
+        }
+        .container {
+          max-width: 600px;
+          text-align: center;
+        }
+        code {
+          background: #f0f0f0;
+          padding: 0.3rem 0.6rem;
+          border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Processing OAuth Redirect...</h2>
+    <p id="status">Please wait.</p>
+</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const error = params.get("error");
+
+    const status = document.getElementById("status");
+
+    if (error) {
+      status.innerHTML = `❌ OAuth Error: <code>${error}</code>`;
+    } else if (code) {
+      status.innerHTML = `✅ Authorization Code Received:<br/><code>${code}</code>`;
+      // Example: send code to backend or redirect
+      // window.location.href = `/success?code=${code}`;
+    } else {
+      status.innerHTML = "⚠️ No authorization code found in URL.";
+    }
+</script>
+</body>
+</html>
