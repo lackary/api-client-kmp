@@ -8,11 +8,13 @@ on:
       - 'web/**'
 
   pull_request:
+    branches:
+      - '**'
     paths:
       - 'web/**'
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
   pull-requests: write
@@ -26,7 +28,7 @@ concurrency:
 jobs:
   deploy:
     environment:
-      name: github-pages
+      name: ${{ github.event_name == 'pull_request' && 'staging' || 'github-pages' }}
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
@@ -47,14 +49,22 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+#      - name: Post deployment comment
+#        if: ${{ github.event_name == 'pull_request' }}
+#        uses: peter-evans/create-or-update-comment@v4
+#        with:
+#          issue-number: ${{ github.event.pull_request.number }}
+#          body: |
+#            🚀 **Static Web Page Deployed!**
+#
+#            🌐 URL: [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})
+#            ✅ Folder: `web/`
+#            🔧 Commit: `${{ github.sha }}`
       - name: Post deployment comment
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-evans/create-or-update-comment@v4
+        if: success()
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            🚀 **Static Web Page Deployed!**
-            
-            🌐 URL: [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})
-            ✅ Folder: `web/`
-            🔧 Commit: `${{ github.sha }}`
+          header: github-pages
+          message: |
+            🚀 Successfully deployed static web to **${{ github.event_name == 'pull_request' && 'staging' || 'production' }}**
+            🌐 URL: **${{ steps.deployment.outputs.page_url }}/auth/callback**
