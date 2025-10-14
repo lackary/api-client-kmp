@@ -27,8 +27,8 @@
 </head>
 <body>
 <div class="container">
-    <h2>Processing OAuth Redirect...</h2>
-    <p id="status">Please wait.</p>
+    <h2>OAuth Redirect</h2>
+    <p id="status">Waiting for authorization...</p>
 </div>
 <script>
     const params = new URLSearchParams(window.location.search);
@@ -38,9 +38,12 @@
     const status = document.getElementById("status");
 
     if (error) {
-      status.innerHTML = `❌ OAuth Error: <code>${error}</code>`;
+      status.innerHTML = `
+        <p>❌ OAuth Error:</p>
+        <p><code>${error}</code></p>
+      `;
     } else if (code) {
-      status.innerHTML = `✅ Authorization Code Received:<br/><code>${code}</code>`;
+      status.innerHTML = "✅ Authorization Code Received.";
       // Example: send code to backend or redirect
       // window.location.href = `/success?code=${code}`;
     } else {
