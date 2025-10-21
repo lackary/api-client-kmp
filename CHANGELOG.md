@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/lackary/api-client-kmp/compare/0.5.0...0.6.0) (2025-10-21)
+
+
+### Features
+
+* **web:** add OAuth 2.0 redirect url ([793ac2a](https://github.com/lackary/api-client-kmp/commit/793ac2a62c486e7fb7af78b5025306afd85f61e5))
+
 # [0.5.0](https://github.com/lackary/api-client-kmp/compare/0.4.0...0.5.0) (2025-10-12)
 
 
