@@ -29,6 +29,10 @@ captures/
 /build/test-results
 /build/tmp
 
+# kcef
+kcef-bundle/
+cache/
+
 # iOS/CocoaPods
 Pods/
 *.podspec.json

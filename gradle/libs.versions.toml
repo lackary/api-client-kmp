@@ -21,6 +21,8 @@ mirzemehdiKmpAuth = "2.3.1"
 composeHotReload = "1.0.0-beta08"
 composeMultiplatform = "1.9.0"
 composeUi = "1.9.2"
+composeMultiplatformMaterial = "1.9.0"
+kevinnzouComposeWebviewMultiplatform = "2.0.3"
 
 # material
 material = "1.13.0"
@@ -74,6 +76,7 @@ google-gms-playServiceAauth = { group = "com.google.android.gms", name = "play-s
 google-googleIdIdentity = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleIdIdentity" }
 
 # Material
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # Firebase
@@ -88,6 +91,9 @@ android-firebase-analytics = { module = "com.google.firebase:firebase-analytics"
 # Kotlin Multiplatform
 kmp-androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "kmpAndroidxLifecycle" }
 kmp-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpAndroidxLifecycle" }
+
+# Compose Multiplatform
+kevinnzou-composeWebviewMultiplatform = { group = "io.github.kevinnzou", name = "compose-webview-multiplatform", version.ref = "kevinnzouComposeWebviewMultiplatform" }
 
 # kotlin gradle plugin
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
