@@ -58,7 +58,9 @@ jobs:
     name: build and test
     runs-on: macos-latest
     env:
-      UNSPLASH_API_KEY: ${{ secrets.UNSPLASH_API_KEY }}
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      UNSPLASH_SECRET_KEY: ${{ secrets.UNSPLASH_SECRET_KEY }}
+      GOOGLE_SERVICES_WEB_CLIENT_ID: ${{ secrets.GOOGLE_SERVICES_WEB_CLIENT_ID }}
     permissions:
       contents: read
     outputs: # Optional, if subsequent jobs need to know if the tests were successful
