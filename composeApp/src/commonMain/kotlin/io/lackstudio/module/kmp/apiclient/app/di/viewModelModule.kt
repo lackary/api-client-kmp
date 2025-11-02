@@ -5,6 +5,6 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    factory { AppViewModel(get(), get()) }
+    factory { AppViewModel(get(), get(), get(), get()) }
 
 }
