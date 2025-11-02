@@ -24,7 +24,6 @@ kotlin {
 
         val xcf = XCFramework()
         listOf(
-            iosX64(),
             iosArm64(),
             iosSimulatorArm64()
         ).forEach {
@@ -108,7 +107,7 @@ kotlin {
 
 android {
     namespace = "io.lackstudio.module.kmp.apiclient.core"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 30
     }
