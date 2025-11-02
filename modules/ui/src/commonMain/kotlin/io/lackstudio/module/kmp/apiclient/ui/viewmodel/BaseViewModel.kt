@@ -71,4 +71,36 @@ abstract class BaseViewModel : ViewModel() {
             }
         }
     }
+
+    /**
+     * [MVI-specific] Handles a UseCase call and delegates the state update logic to the caller.
+     * This approach allows BaseViewModel to handle coroutine launching, setting the Loading state,
+     * error catching, and error message generation, while the AppViewModel is responsible for
+     * merging the result into a single MviUiState.
+     */
+    protected fun <T> handleUseCaseCall(
+        // 1. How to set the Loading state.
+        onLoading: () -> Unit,
+        // 2. The UseCase to be executed.
+        useCase: suspend () -> UseCaseResult<T>,
+        // 3. On success, how to update the MviUiState (receives the success data T).
+        onSuccess: (T) -> Unit,
+        // 4. On failure, how to update the MviUiState (receives the error message String).
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            onLoading() // First, call the Loading logic passed in from the outside.
+
+            when (val result = useCase()) {
+                is UseCaseResult.Success -> {
+                    onSuccess(result.data) // Call the Success logic passed in from the outside.
+                }
+                is UseCaseResult.Error -> {
+                    println("result: $result")
+                    val errorMessage = getAppErrorMessage(result.exception) // Use BaseViewModel's error logic.
+                    onError(errorMessage) // Call the Error logic passed in from the outside.
+                }
+            }
+        }
+    }
 }
