@@ -24,17 +24,17 @@ kotlin {
         }
     }
 
-        val xcf = XCFramework()
-        listOf(
-            iosArm64(),
-            iosSimulatorArm64()
-        ).forEach {
-            it.binaries.framework {
-                baseName = "UiApiClient"
-                xcf.add(this)
-                isStatic = true
-            }
+    val xcf = XCFramework()
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "UiApiClient"
+            xcf.add(this)
+            isStatic = true
         }
+    }
 
     jvm()
 
