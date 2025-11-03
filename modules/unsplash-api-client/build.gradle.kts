@@ -54,10 +54,6 @@ kotlin {
             //put your multiplatform dependencies here
             implementation(project(":modules:core"))
             implementation(kotlin("stdlib-common"))
-            implementation(libs.koin.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

@@ -1,6 +1,7 @@
 package io.lackstudio.module.kmp.apiclient.core.network.extension
 
 import io.ktor.http.ParametersBuilder
+import io.ktor.http.encodeURLParameter
 import kotlinx.serialization.json.*
 
 /**
@@ -13,6 +14,7 @@ inline fun <reified T : Any> ParametersBuilder.appendParamsFrom(
 ) {
     val jsonObj = json.encodeToJsonElement(request).jsonObject
     jsonObj.forEach { (key, value) ->
-        append(key, value.toString().trim('"'))
+        val raw = value.toString().trim('"')
+        append(key, raw)
     }
 }

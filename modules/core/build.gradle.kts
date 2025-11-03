@@ -41,16 +41,11 @@ kotlin {
             //put your multiplatform dependencies here
             implementation(kotlin("stdlib-common"))
             // Ktor Client Core
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.client.logging)
-            // Ktor
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            // Kotlinx
-            implementation(libs.kotlinx.serialization.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datatime)
+            api(libs.ktor.client.core)
+            api(libs.ktor.client.content.negotiation)
+            api(libs.ktor.client.logging)
+            // Ktor Serialization
+            api(libs.ktor.serialization.kotlinx.json)
 
             // Koin Core (Common Main)
             api(libs.koin.core) // Use an API to make dependencies visible to downstream modules.
@@ -58,6 +53,11 @@ kotlin {
             // Kermit Logger
             api(libs.touchlab.kermit)
 //            api(libs.touchlab.kermit.ktor.logger)
+
+            // Kotlinx
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datatime)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
