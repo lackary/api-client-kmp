@@ -36,8 +36,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +57,6 @@ import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.core.network.buildUrlWithQueryParams
 import io.lackstudio.module.kmp.apiclient.ui.component.OAuthWebViewBottomSheet
-import io.lackstudio.module.kmp.apiclient.ui.component.encodeToJavaScriptString
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import io.lackstudio.module.kmp.apiclient.core.network.oauth.model.UnsplashAuthorizeRequest
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
@@ -216,9 +213,8 @@ fun App() {
                             // *** Close the Bottom Sheet ***
 //                            showWebViewSheet.value = false
                             appViewModel.processIntent(HomeUiIntent.LoadPhotos)
-
-                            val jsErrorCall = "displayExchangeSuccess('${state.data.tokenType}')"
-                            onExecuteJavascript(jsErrorCall)
+                            val jsCall = "displayExchangeSuccess('${state.data.tokenType}')".trimIndent()
+                            onExecuteJavascript(jsCall)
                         }
 
                         // When token exchange fails
@@ -230,8 +226,8 @@ fun App() {
                             val errorMessage = state.message
 
                             // *** Call JavaScript function to display the error ***
-                            val jsErrorCall = "displayAuthError('${errorMessage.encodeToJavaScriptString()}')"
-                            onExecuteJavascript(jsErrorCall)
+                            val jsCall = "displayAuthError('${errorMessage}')".trimIndent()
+                            onExecuteJavascript(jsCall)
                         }
 
                         else -> {}

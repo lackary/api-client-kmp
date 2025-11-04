@@ -25,9 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewFileReadType
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
 import io.ktor.http.Url
+import io.lackstudio.module.kmp.apiclient.ui.generated.resources.Res
 import kotlinx.coroutines.launch
 
 
@@ -48,8 +51,18 @@ fun  OAuthWebViewBottomSheet(
     )
 
     // Create the state of the WebView
-    val webViewState = rememberWebViewState(url = url).apply {
-        // Configure WebSettings
+    val DEBUG = false
+    val webViewState = if (DEBUG) {
+        val filName = Res.getUri("files/index.html")
+        println("load the html file: $filName")
+        rememberWebViewStateWithHTMLFile(
+            fileName = filName,
+            readType = WebViewFileReadType.COMPOSE_RESOURCE_FILES,
+        )
+    } else {
+        println("load url: $url")
+        rememberWebViewState(url = url)
+    }.apply {
         webSettings.apply {
             this.backgroundColor = Color.White
 
@@ -151,6 +164,7 @@ fun  OAuthWebViewBottomSheet(
                 // Check if loadingState is LoadingState.Loading
                 val loadingState = webViewState.loadingState
                 if (loadingState is LoadingState.Loading) {
+                    println("Loading...")
                     // Use LinearProgressIndicator to display progress
                     LinearProgressIndicator(
                         progress = {
@@ -161,6 +175,10 @@ fun  OAuthWebViewBottomSheet(
                         trackColor = ProgressIndicatorDefaults.linearTrackColor,
                         strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
                     )
+                } else {
+                    println("Loading complete.")
+//                    val jsErrorCall = "displayAuthError('eeerrrooorrr')".trimIndent()
+//                    onExecuteJavascript(jsErrorCall)
                 }
                 // WebView component
                 WebView(
@@ -169,6 +187,7 @@ fun  OAuthWebViewBottomSheet(
                     // Let WebView fill the remaining space of the Column
                     modifier = Modifier.fillMaxSize()
                 )
+
                 content(onExecuteJavascript)
             }
 
@@ -182,9 +201,4 @@ fun  OAuthWebViewBottomSheet(
             // For Android, `AndroidView` (in the Android implementation) is typically used to handle nested scrolling issues.
         }
     }
-}
-
-// Helper function: Properly escape the error message for a JS string
-fun String.encodeToJavaScriptString(): String {
-    return this.replace("\\", "\\\\").replace("'", "\\'")
 }
