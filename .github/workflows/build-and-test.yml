@@ -109,12 +109,12 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > "${XCONFIG_RELEASE_FILENAME}"
           echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_RELEASE_FILENAME}"
 
-      - name: Create gradle.properties
-        run: |
-          echo "android.useAndroidX=true" >> gradle.properties
-          echo "org.gradle.caching=true" >> gradle.properties
-          echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
-          echo "kotlin.native.cacheKind.iosSimulatorArm64=none" >> gradle.properties
+#      - name: Create gradle.properties
+#        run: |
+#          echo "android.useAndroidX=true" >> gradle.properties
+#          echo "org.gradle.caching=true" >> gradle.properties
+#          echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
+#          echo "kotlin.native.cacheKind.iosSimulatorArm64=none" >> gradle.properties
 
 #      - name: Resolve Swift Package Manager Dependencies
 #        working-directory: './iosApp'
