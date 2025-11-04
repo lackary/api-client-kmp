@@ -180,6 +180,7 @@ jobs:
         # -Pskip.tests
         # Because the test APIs of Compose Multiplatform is still Experimental.
         run: |
+          ./gradlew clean
           ./gradlew check \
               -Pskip.tests=true \
               -Pskip.native.tests=true \
