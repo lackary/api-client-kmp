@@ -173,7 +173,7 @@ jobs:
               -scheme "iosApp" \
               -configuration "Debug" \
               -sdk iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" \
+              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.5,arch=arm64" \
               ENABLE_PREVIEWS=NO
 
       - name: Run KMP Unit Tests
