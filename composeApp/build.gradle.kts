@@ -259,31 +259,25 @@ tasks.matching { it.name.contains(Regex("lint", RegexOption.IGNORE_CASE))}.confi
 
 // Skip JVM / Android tests
 tasks.withType<Test>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.tests")) {
-            println("Skipping JVM/Android test ($name) because -Pskip.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.tests")) {
+        println("Disabling JVM/Android unit test ($name) because -Pskip.tests is set.")
+        enabled = false
     }
 }
 
 // Skip Kotlin/Native tests
 tasks.withType<KotlinNativeTest>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.native.tests")) {
+        println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
+        enabled = false
     }
 }
 
 // Important: Skip Kotlin/Native link tasks (to avoid test linking like linkDebugTestIosSimulatorArm64)
 tasks.withType<KotlinNativeLink>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.native.tests")) {
+        println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
+        enabled = false
     }
 }
 
