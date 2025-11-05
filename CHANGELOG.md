@@ -1,3 +1,25 @@
+# [0.7.0](https://github.com/lackary/api-client-kmp/compare/0.6.0...0.7.0) (2025-11-05)
+
+
+### Bug Fixes
+
+* **build:** add token type and token int composeApp test ([9232b46](https://github.com/lackary/api-client-kmp/commit/9232b46df6e6b495c95d938d6520d5b6ec8c0060))
+* **build:** skip all composeApp test ([2fbe896](https://github.com/lackary/api-client-kmp/commit/2fbe896abfadbd6bfab9f81244a01eb165bec7fd))
+* **build:** solve the dependency error by Firebase. ([92ced6e](https://github.com/lackary/api-client-kmp/commit/92ced6e84ac8a6029bc01d6c0d890396baecf1be))
+* **build:** solve the Lint error by android SDK version ([dbc9332](https://github.com/lackary/api-client-kmp/commit/dbc9332d8872c55e07286d7d60d17277ad598d10))
+* **ci:** build failed by iOS Simulator version ([5de3ed9](https://github.com/lackary/api-client-kmp/commit/5de3ed96bc5f46e829bb3e08f3fd49300ca45e83))
+* **ci:** build failed by serialization error ([704d42f](https://github.com/lackary/api-client-kmp/commit/704d42f6b76caba4ff27bee709cc429aa946743c))
+* **ci:** remove Unresolved reference in GitHub Action ([1069d24](https://github.com/lackary/api-client-kmp/commit/1069d24e81e85f1f1f2f969f0f88c89e0c9f1e99))
+* **web:** execute js failed in callback/index.html ([171fac4](https://github.com/lackary/api-client-kmp/commit/171fac45facd0e059983b44435d5bfb749148fdb))
+
+
+### Features
+
+* **MVI:** add a overloading method for MVI ([cf291b4](https://github.com/lackary/api-client-kmp/commit/cf291b4082420c43793e9d4e4768b8520031f60b))
+* **OAuth:** add the relevant OAuth feature in core module ([b486e18](https://github.com/lackary/api-client-kmp/commit/b486e181189e2fada5172a7c38a0f0ecdfb8437c))
+* **oauth:** implement Unsplash user authorization flow in sample app ([6d25a5d](https://github.com/lackary/api-client-kmp/commit/6d25a5ddccf0bee1165a025b3e901f0c6e1950a0))
+* **webview:** add a WebView of BottomSheet for OAuth 2.0 flow ([e358529](https://github.com/lackary/api-client-kmp/commit/e3585292b480d363657515983ae062c086caade9))
+
 # [0.6.0](https://github.com/lackary/api-client-kmp/compare/0.5.0...0.6.0) (2025-10-21)
 
 
