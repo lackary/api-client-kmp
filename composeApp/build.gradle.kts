@@ -119,6 +119,7 @@ kotlin {
             implementation(libs.mirzemehdi.kmpauthFirebase)
             implementation(libs.mirzemehdi.kmpauthUihelper)
             implementation(libs.touchlab.kermit)
+            implementation(libs.gitlive.firebaseAuth)
             implementation(projects.modules.unsplashApiClient)
             implementation(projects.modules.core)
             implementation(projects.modules.ui)
@@ -132,6 +133,9 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(project.dependencies.platform(libs.android.firebase.bom))
+            implementation(libs.android.firebase.authKtx)
+            implementation(libs.android.firebase.commonKtx)
             implementation(compose.preview)
             implementation(libs.androidx.activityCompose)
         }
