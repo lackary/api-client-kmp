@@ -1,5 +1,7 @@
 package io.lackstudio.module.kmp.apiclient.core.common.util
 
+import android.annotation.SuppressLint
+import android.os.Build
 import co.touchlab.kermit.platformLogWriter
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,8 +27,14 @@ actual fun getCurrentProcessId(): String {
     return Process.myPid().toString()
 }
 
+@SuppressLint("NewApi")
 actual fun getCurrentThreadId(): String {
-    return Thread.currentThread().id.toString()
+
+    return if (Build.VERSION.SDK_INT >= 36) {
+        Thread.currentThread().threadId().toString()
+    } else {
+        Thread.currentThread().id.toString()
+    }
 }
 
 actual fun appPlatformLogWriter(): LogWriter = platformLogWriter()
