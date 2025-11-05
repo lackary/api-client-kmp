@@ -4,7 +4,6 @@ build/
 
 # Secrets and local properties
 # Ensure these are not versioned: API keys, local SDK paths
-gradle.properties
 local.properties
 
 # IDE specific files
@@ -29,6 +28,10 @@ captures/
 /build/reports
 /build/test-results
 /build/tmp
+
+# kcef
+kcef-bundle/
+cache/
 
 # iOS/CocoaPods
 Pods/

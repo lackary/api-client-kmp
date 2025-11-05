@@ -1,13 +1,22 @@
-import org.gradle.internal.jvm.Jvm
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.buildkonfig.gradle.plugin)
+    }
+}
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -17,6 +26,7 @@ plugins {
     alias(libs.plugins.compose.hotReload)
     alias(libs.plugins.gms.google.services)
     alias(libs.plugins.kotlin.native.cocoapods)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -98,6 +108,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -107,6 +118,8 @@ kotlin {
             implementation(libs.mirzemehdi.kmpauthGoogle)
             implementation(libs.mirzemehdi.kmpauthFirebase)
             implementation(libs.mirzemehdi.kmpauthUihelper)
+            implementation(libs.touchlab.kermit)
+            implementation(libs.gitlive.firebaseAuth)
             implementation(projects.modules.unsplashApiClient)
             implementation(projects.modules.core)
             implementation(projects.modules.ui)
@@ -120,6 +133,9 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(project.dependencies.platform(libs.android.firebase.bom))
+            implementation(libs.android.firebase.authKtx)
+            implementation(libs.android.firebase.commonKtx)
             implementation(compose.preview)
             implementation(libs.androidx.activityCompose)
         }
@@ -137,6 +153,36 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(compose.desktop.uiTestJUnit4)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "io.lackstudio.module.kmp.apiclient.app.config"
+    val localProps = Properties()
+    val localPropsFile = rootProject.file("local.properties")
+
+    if (localPropsFile.exists()) {
+        localProps.load(localPropsFile.inputStream())
+    }
+
+    val errorMessage = "not found. Please set it as an environment variable or in local.properties."
+
+    val unsplashAccessKey = System.getenv("UNSPLASH_ACCESS_KEY")
+        ?: localProps.getProperty("UNSPLASH_ACCESS_KEY")
+        ?: error("UNSPLASH_ACCESS_KEY $errorMessage ")
+
+    val unsplashSecretKey = System.getenv("UNSPLASH_SECRET_KEY")
+        ?: localProps.getProperty("UNSPLASH_SECRET_KEY")
+        ?: error("UNSPLASH_SECRET_KEY  $errorMessage")
+
+    val googleServicesWebClientId = System.getenv("GOOGLE_SERVICES_WEB_CLIENT_ID")
+        ?: localProps.getProperty("GOOGLE_SERVICES_WEB_CLIENT_ID")
+        ?: error("GOOGLE_SERVICES_WEB_CLIENT_ID $errorMessage")
+
+    defaultConfigs {
+        buildConfigField(STRING, "UNSPLASH_ACCESS_KEY", unsplashAccessKey)
+        buildConfigField(STRING, "UNSPLASH_SECRET_KEY", unsplashSecretKey)
+        buildConfigField(STRING, "GOOGLE_SERVICES_WEB_CLIENT_ID", googleServicesWebClientId)
     }
 }
 
@@ -188,6 +234,19 @@ compose.desktop {
     }
 }
 
+afterEvaluate {
+    tasks.withType<JavaExec> {
+        jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
+        jvmArgs("--add-opens", "java.desktop/java.awt.peer=ALL-UNNAMED")
+
+        if (System.getProperty("os.name").contains("Mac")) {
+            jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED")
+        }
+    }
+}
+
 // Skip Android Lint tasks (to avoid running Lint like generateDebugAndroidTestLintModel)
 tasks.matching { it.name.contains(Regex("lint", RegexOption.IGNORE_CASE))}.configureEach {
     onlyIf {
@@ -200,31 +259,25 @@ tasks.matching { it.name.contains(Regex("lint", RegexOption.IGNORE_CASE))}.confi
 
 // Skip JVM / Android tests
 tasks.withType<Test>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.tests")) {
-            println("Skipping JVM/Android test ($name) because -Pskip.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.tests")) {
+        println("Disabling JVM/Android unit test ($name) because -Pskip.tests is set.")
+        enabled = false
     }
 }
 
 // Skip Kotlin/Native tests
 tasks.withType<KotlinNativeTest>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.native.tests")) {
+        println("Skipping Kotlin/Native test ($name) because -Pskip.native.tests=true")
+        enabled = false
     }
 }
 
 // Important: Skip Kotlin/Native link tasks (to avoid test linking like linkDebugTestIosSimulatorArm64)
 tasks.withType<KotlinNativeLink>().configureEach {
-    onlyIf {
-        if (project.hasProperty("skip.native.tests")) {
-            println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
-            false
-        } else true
+    if (project.hasProperty("skip.native.tests")) {
+        println("Skipping Kotlin/Native link task ($name) because -Pskip.native.tests=true")
+        enabled = false
     }
 }
 

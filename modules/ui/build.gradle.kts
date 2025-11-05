@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.compose.compiler)
     id("maven-publish")
 }
 
@@ -22,24 +24,31 @@ kotlin {
         }
     }
 
-        val xcf = XCFramework()
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64()
-        ).forEach {
-            it.binaries.framework {
-                baseName = "UiApiClient"
-                xcf.add(this)
-                isStatic = true
-            }
+    val xcf = XCFramework()
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "UiApiClient"
+            xcf.add(this)
+            isStatic = true
         }
+    }
 
     jvm()
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.kmp.androidx.lifecycle.viewmodelCompose)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(libs.ktor.client.core)
+            implementation(libs.kmp.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.kevinnzou.composeWebviewMultiplatform)
             implementation(projects.modules.core)
         }
         commonTest.dependencies {
@@ -49,6 +58,8 @@ kotlin {
         }
 
         jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutinesSwing)
         }
         jvmTest.dependencies {
         }
@@ -68,7 +79,7 @@ kotlin {
 
 android {
     namespace = "io.lackstudio.module.kmp.apiclient.ui"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 30
     }

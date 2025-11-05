@@ -1,8 +1,7 @@
-import com.android.build.gradle.internal.testFixtures.getTestFixturesCapabilityForProject
-import com.android.build.gradle.internal.testFixtures.testFixturesFeatureName
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
 
 buildscript {
     repositories {
@@ -38,7 +37,6 @@ kotlin {
 
     val xcf = XCFramework()
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -56,10 +54,6 @@ kotlin {
             //put your multiplatform dependencies here
             implementation(project(":modules:core"))
             implementation(kotlin("stdlib-common"))
-            implementation(libs.koin.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.ktor.client.logging)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -107,18 +101,32 @@ kotlin {
 
 buildkonfig {
     packageName = "io.lackstudio.module.kmp.apiclient.unsplash.config"
-    val unsplashApiKey = System.getenv("UNSPLASH_API_KEY")
-        ?: project.properties["UNSPLASH_API_KEY"] as? String
-        ?: error("UNSPLASH_API_KEY not found. Please set it as an environment variable or in gradle.properties.")
+    val localProps = Properties()
+    val localPropsFile = rootProject.file("local.properties")
+
+    if (localPropsFile.exists()) {
+        localProps.load(localPropsFile.inputStream())
+    }
+
+    val errorMessage = "not found. Please set it as an environment variable or in local.properties."
+
+    val unsplashAccessKey = System.getenv("UNSPLASH_ACCESS_KEY")
+        ?: localProps.getProperty("UNSPLASH_ACCESS_KEY")
+        ?: error("UNSPLASH_ACCESS_KEY $errorMessage")
+
+    val unsplashSecretKey = System.getenv("UNSPLASH_SECRET_KEY")
+        ?: localProps.getProperty("UNSPLASH_SECRET_KEY")
+        ?: error("UNSPLASH_SECRET_KEY $errorMessage")
 
     defaultConfigs {
-        buildConfigField(STRING, "UNSPLASH_API_KEY", unsplashApiKey)
+        buildConfigField(STRING, "UNSPLASH_ACCESS_KEY", unsplashAccessKey)
+        buildConfigField(STRING, "UNSPLASH_SECRET_KEY", unsplashSecretKey)
     }
 }
 
 android {
     namespace = "io.lackstudio.module.kmp.apiclient.unsplash"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 30
     }

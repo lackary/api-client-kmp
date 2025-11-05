@@ -2,9 +2,11 @@ package io.lackstudio.module.kmp.apiclient.app.ui.screen
 
 import androidx.compose.ui.test.*
 import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
+import io.lackstudio.module.kmp.apiclient.app.platform.getUnsplashAccessKey
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
+import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment.AUTH_SCHEME_PUBLIC
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
@@ -28,7 +30,7 @@ class AppTest : KoinTest {
             modules(
                 listOf(
                     appLoggerModule(appPlatformLogWriter()),
-                    unsplashModule,
+                    unsplashModule(AUTH_SCHEME_PUBLIC, getUnsplashAccessKey()),
                     viewModelModule
                 )
             )

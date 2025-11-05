@@ -13,14 +13,18 @@ googleGms = "21.4.0"
 googleIdIdentity = "1.1.1"
 
 # Firebase
-firebase = "34.3.0"
-gitliveFirebase = "2.3.0"
+firebaseBom = "33.8.0"
+gitliveFirebase = "2.1.0"
 mirzemehdiKmpAuth = "2.3.1"
+googleFirebaseCommon = "21.0.0"
+googleFirebaseAuth = "23.0.0"
 
 # compose
 composeHotReload = "1.0.0-beta08"
 composeMultiplatform = "1.9.0"
 composeUi = "1.9.2"
+composeMultiplatformMaterial = "1.9.0"
+kevinnzouComposeWebviewMultiplatform = "2.0.3"
 
 # material
 material = "1.13.0"
@@ -74,20 +78,24 @@ google-gms-playServiceAauth = { group = "com.google.android.gms", name = "play-s
 google-googleIdIdentity = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleIdIdentity" }
 
 # Material
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 # Firebase
-android-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
+android-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 #android-firebase-config = { group = "comm.google.firebase", name = "firebase-config", version.ref = "firebase"}
 # Optional, include if using firebase auth
-android-firebase-auth = { module = "com.google.firebase:firebase-auth" }
-android-firebase-common = { module = "com.google.firebase:firebase-common" }
+android-firebase-authKtx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "googleFirebaseAuth" }
+android-firebase-commonKtx = { module = "com.google.firebase:firebase-common-ktx", version.ref = "googleFirebaseCommon" }
 # Optional, include if using firebase analytics
 android-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 
 # Kotlin Multiplatform
 kmp-androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "kmpAndroidxLifecycle" }
 kmp-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "kmpAndroidxLifecycle" }
+
+# Compose Multiplatform
+kevinnzou-composeWebviewMultiplatform = { group = "io.github.kevinnzou", name = "compose-webview-multiplatform", version.ref = "kevinnzouComposeWebviewMultiplatform" }
 
 # kotlin gradle plugin
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }

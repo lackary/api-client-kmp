@@ -58,7 +58,9 @@ jobs:
     name: build and test
     runs-on: macos-latest
     env:
-      UNSPLASH_API_KEY: ${{ secrets.UNSPLASH_API_KEY }}
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      UNSPLASH_SECRET_KEY: ${{ secrets.UNSPLASH_SECRET_KEY }}
+      GOOGLE_SERVICES_WEB_CLIENT_ID: ${{ secrets.GOOGLE_SERVICES_WEB_CLIENT_ID }}
     permissions:
       contents: read
     outputs: # Optional, if subsequent jobs need to know if the tests were successful
@@ -107,12 +109,12 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > "${XCONFIG_RELEASE_FILENAME}"
           echo "REVERSE_CLIENT_ID=${{ secrets.GOOGLE_REVERSED_CLIENT_ID }}" >> "${XCONFIG_RELEASE_FILENAME}"
 
-      - name: Create gradle.properties
-        run: |
-          echo "android.useAndroidX=true" >> gradle.properties
-          echo "org.gradle.caching=true" >> gradle.properties
-          echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
-          echo "kotlin.native.cacheKind.iosSimulatorArm64=none" >> gradle.properties
+#      - name: Create gradle.properties
+#        run: |
+#          echo "android.useAndroidX=true" >> gradle.properties
+#          echo "org.gradle.caching=true" >> gradle.properties
+#          echo "org.gradle.jvmargs=-Xmx8192M" >> gradle.properties
+#          echo "kotlin.native.cacheKind.iosSimulatorArm64=none" >> gradle.properties
 
 #      - name: Resolve Swift Package Manager Dependencies
 #        working-directory: './iosApp'
@@ -171,13 +173,14 @@ jobs:
               -scheme "iosApp" \
               -configuration "Debug" \
               -sdk iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max" \
+              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.5,arch=arm64" \
               ENABLE_PREVIEWS=NO
 
       - name: Run KMP Unit Tests
         # -Pskip.tests
         # Because the test APIs of Compose Multiplatform is still Experimental.
         run: |
+          ./gradlew clean
           ./gradlew check \
               -Pskip.tests=true \
               -Pskip.native.tests=true \

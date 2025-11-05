@@ -1,7 +1,6 @@
 package io.lackstudio.module.kmp.apiclient.core.network
 
 import io.lackstudio.module.kmp.apiclient.core.common.logging.MockKtorLoggerAdapter
-import io.lackstudio.module.kmp.apiclient.core.di.provideMockNetworkModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
@@ -27,11 +26,12 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.pluginOrNull
 import io.ktor.http.HttpMethod
 import io.ktor.utils.io.ByteReadChannel
-import io.lackstudio.module.kmp.apiclient.core.network.KtorClientFactory
-import io.lackstudio.module.kmp.apiclient.core.network.KtorConfig
+import io.lackstudio.module.kmp.apiclient.core.di.ktorClientModule
+import io.lackstudio.module.kmp.apiclient.core.network.oauth.AccessTokenProvider
 import kotlinx.serialization.Serializable
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import kotlin.test.AfterTest
@@ -46,8 +46,9 @@ class KtorClientFactoryTest: KoinTest {
 
     // 1. Prepare: Create a MockEngine to simulate HTTP requests and responses.
     private val testBaseUrl = "https://example.com"
-    private val testApiKey = "test-api-key"
-    private val testAuthToken = "Client $testApiKey"
+    private val testTokenType = "Client"
+    private val testToken = "test-api-key"
+    private val testAuthToken = "$testTokenType $testToken"
     private val testUrlPath = "/success"
 
     private val httpClient: HttpClient by inject()
@@ -75,8 +76,14 @@ class KtorClientFactoryTest: KoinTest {
 
     private val testKtorConfig = KtorConfig(
         baseUrl = testBaseUrl,
-        authToken = testAuthToken,
         logLevel = LogLevel.ALL
+    )
+
+    val sharedMockLogger = MockKtorLoggerAdapter()
+
+    val testAccessTokenProvider = AccessTokenProvider(
+        initialTokenType = testTokenType,
+        initialToken = testToken
     )
 
     @BeforeTest
@@ -84,11 +91,18 @@ class KtorClientFactoryTest: KoinTest {
         stopKoin()
         startKoin {
             modules(
-                provideMockNetworkModule(
+                ktorClientModule(
+                    engineFactory = mockEngine,
                     ktorConfig = testKtorConfig,
-                    ktorLogger = MockKtorLoggerAdapter(),
-                    mockEngine = mockEngine
-                )
+                    // ktor client need KtorLogger
+                    logger = sharedMockLogger
+                ),
+                module {
+                    single<KtorLogger> { sharedMockLogger }
+                    single {
+                        testAccessTokenProvider
+                    }
+                },
             )
         }
     }
@@ -106,6 +120,7 @@ class KtorClientFactoryTest: KoinTest {
 
         assertEquals("$testBaseUrl$testUrlPath", request.url.toString())
         val authHeader = request.headers[HttpHeaders.Authorization]
+
         assertNotNull(authHeader)
         assertEquals(testAuthToken, authHeader)
     }
@@ -165,7 +180,7 @@ class KtorClientFactoryTest: KoinTest {
         runTest {
 
             val mockEngine = MockEngine { request ->
-                // 2. Verify: Check the details of the request sent to the MockEngine.
+                // Verify: Check the details of the request sent to the MockEngine.
                 assertEquals(HttpMethod.Get, request.method)
                 assertEquals("$testBaseUrl$testUrlPath", request.url.toString())
                 assertEquals(
@@ -177,7 +192,7 @@ class KtorClientFactoryTest: KoinTest {
                     request.headers[HttpHeaders.ContentType]
                 )
 
-                // 3. Simulate Response: Pretend the server responded successfully.
+                // Simulate Response: Pretend the server responded successfully.
                 respond(
                     content = "{}",
                     status = HttpStatusCode.OK,
@@ -192,7 +207,8 @@ class KtorClientFactoryTest: KoinTest {
             val client = KtorClientFactory.createHttpClient(
                 engineFactory = mockEngine,
                 ktorConfig = testKtorConfig,
-                logger = MockKtorLoggerAdapter()
+                logger = MockKtorLoggerAdapter(),
+                accessTokenProvider = { testAccessTokenProvider }
             )
 
             // 5. Trigger: Send a simple request, which will trigger the verification logic in the MockEngine.
@@ -218,7 +234,7 @@ class KtorClientFactoryTest: KoinTest {
             // 4. Execute: Create an HttpClient without passing an authToken.
             val client = KtorClientFactory.createHttpClient(
                 engineFactory = mockEngine,
-                ktorConfig = testKtorConfig.copy(authToken = null),
+                ktorConfig = testKtorConfig.copy(),
                 logger = MockKtorLoggerAdapter()
             )
 

@@ -4,11 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -16,8 +18,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,19 +39,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.touchlab.kermit.Logger
 import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import com.mmk.kmpauth.google.GoogleButtonUiContainer
 import com.mmk.kmpauth.uihelper.google.GoogleSignInButton
 import com.mmk.kmpauth.uihelper.google.GoogleSignInButtonIconOnly
 import dev.gitlive.firebase.auth.FirebaseUser
 import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
+import io.lackstudio.module.kmp.apiclient.app.platform.getUnsplashAccessKey
+import io.lackstudio.module.kmp.apiclient.app.ui.intent.HomeUiIntent
 import io.lackstudio.module.kmp.apiclient.app.ui.viewmodel.AppViewModel
+import io.lackstudio.module.kmp.apiclient.app.utils.Environment as AppEnvironment
 import io.lackstudio.module.kmp.apiclient.composeapp.generated.resources.Res
 import io.lackstudio.module.kmp.apiclient.composeapp.generated.resources.compose_multiplatform
 import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
+import io.lackstudio.module.kmp.apiclient.core.network.buildUrlWithQueryParams
+import io.lackstudio.module.kmp.apiclient.ui.component.OAuthWebViewBottomSheet
+import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
+import io.lackstudio.module.kmp.apiclient.core.network.oauth.model.UnsplashAuthorizeRequest
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthToken
+import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment as UnsplashEnvironment
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -54,10 +72,19 @@ import org.koin.compose.koinInject
 fun App() {
     val appLogger: AppLogger = koinInject()
     val appViewModel: AppViewModel = koinInject()
+
     appLogger.info("AppKt", "App MaterialTheme create.")
 
+    Logger.withTag("AppKt").i { "Kermit test" }
+
+    // MVVM stateFlow
+    val photoUiState by appViewModel.photoUiState.collectAsState()
+    // MVI stateFLow
     val uiState by appViewModel.uiState.collectAsState()
 
+    val showWebViewSheet = remember { mutableStateOf(false) }
+
+    // MVVM received data
     LaunchedEffect(key1 = Unit) {
         appViewModel.loadPhotos()
     }
@@ -151,6 +178,62 @@ fun App() {
                 DividerDefaults.color
             )
 
+            // Button or any action to open the Bottom Sheet
+            Button(onClick = { showWebViewSheet.value = true }) {
+                Text("Open WebView")
+            }
+
+                val authRequest = UnsplashAuthorizeRequest(
+                    clientId = getUnsplashAccessKey(),
+                    redirectUri = AppEnvironment.AUTH_REDIRECT_URL,
+                    responseType = "code",
+                    scope = "public"
+                )
+                val authorizeRequestUrl = buildUrlWithQueryParams(
+                    host = UnsplashEnvironment.HOST_NAME,
+                    pathSegments = UnsplashEnvironment.OAUTH_PATH_SEGMENTS,
+                    queryParams = authRequest,
+                )
+
+            // Show the Bottom Sheet
+            OAuthWebViewBottomSheet(
+                url = authorizeRequestUrl, // Replace with the URL you want to display
+                showSheet = showWebViewSheet,
+                onAuthCodeReceived = { code ->
+                    appViewModel.processIntent(HomeUiIntent.ExchangeOAuth(code))
+                }
+            ) { onExecuteJavascript ->
+                // *** Key Step: Observe state and execute side effects ***
+                LaunchedEffect(uiState.oAuthToken) {
+                    when (val state = uiState.oAuthToken) {
+                        // When Access Token is successfully obtained
+                        is AppUiState.Success<UnsplashOAuthToken> -> {
+                            appLogger.info("AppKt", "Token Exchange Success!")
+
+                            // *** Close the Bottom Sheet ***
+//                            showWebViewSheet.value = false
+                            appViewModel.processIntent(HomeUiIntent.LoadPhotos)
+                            val jsCall = "displayExchangeSuccess('${state.data.tokenType}')".trimIndent()
+                            onExecuteJavascript(jsCall)
+                        }
+
+                        // When token exchange fails
+                        is AppUiState.Error -> {
+                            appLogger.error("AppKt", "Token Exchange Failed: ${state.message}")
+
+                            // *** Do not close the Bottom Sheet ***
+                            // Keep the WebView open so the user can see the error, retry, or close it manually.
+                            val errorMessage = state.message
+
+                            // *** Call JavaScript function to display the error ***
+                            val jsCall = "displayAuthError('${errorMessage}')".trimIndent()
+                            onExecuteJavascript(jsCall)
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
         }
     }
 }
@@ -228,7 +311,7 @@ fun AppPreview() {
         modules(
             listOf(
                 appLoggerModule(appPlatformLogWriter()),
-                unsplashModule,
+                unsplashModule(tokenType = UnsplashEnvironment.AUTH_SCHEME_PUBLIC, token = getUnsplashAccessKey()),
                 viewModelModule
             )
         )

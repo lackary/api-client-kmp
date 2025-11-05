@@ -10,7 +10,6 @@ import io.lackstudio.module.kmp.apiclient.core.common.logging.LogConfiguration
 import io.lackstudio.module.kmp.apiclient.core.common.logging.setupKermitLogger
 import io.lackstudio.module.kmp.apiclient.core.network.KtorClientFactory
 import io.lackstudio.module.kmp.apiclient.core.network.KtorConfig
-import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -32,17 +31,17 @@ fun ktorLoggerModule(logWriter: LogWriter) = module {
 
 }
 
-fun provideNetworkModule(
+fun ktorClientModule(
     engineFactory: HttpClientEngine,
     ktorConfig: KtorConfig,
-    loggerModule: Module
+    logger: KtorLogger
 ) = module {
-    includes(loggerModule)
     single {
         KtorClientFactory.createHttpClient(
             engineFactory = engineFactory,
             ktorConfig = ktorConfig,
-            logger = get()
+            logger = logger,
+            accessTokenProvider = { get() }
         )
     }
 }
