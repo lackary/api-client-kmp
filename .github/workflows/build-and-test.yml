@@ -164,6 +164,35 @@ jobs:
           gem install cocoapods 
           pod install
 
+      # ✅ List simulators
+      - name: List available simulators
+        run: |
+          echo "=== RUNTIMES ==="
+          xcrun simctl list runtimes
+          echo "=== DEVICES ==="
+          xcrun simctl list devices
+
+      # ✅ Automatically find an available simulator (prioritize iPhone / Booted / Available)
+      - name: Select an available simulator
+        id: find-sim
+        run: |
+          set -e
+
+          SIM=$(xcrun simctl list devices | \
+            grep -E "iPhone" | \
+            grep -v unavailable | \
+            grep -v "(Booted)" | \
+            sed -nE 's/.*\(([0-9A-F-]{36})\).*/\1/p' | \
+            head -n 1)
+
+          if [ -z "$SIM" ]; then
+            echo "❌ No available iPhone simulators found"
+            exit 1
+          fi
+
+          echo "✅ Selected Simulator: $SIM"
+          echo "SIM=$SIM" >> $GITHUB_ENV
+
       - name: Xcode Build (clean build .xcworkspace)
         working-directory: './iosApp'
         run: |
@@ -173,7 +202,7 @@ jobs:
               -scheme "iosApp" \
               -configuration "Debug" \
               -sdk iphonesimulator \
-              -destination "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.5,arch=arm64" \
+              -destination "id=$SIM" \
               ENABLE_PREVIEWS=NO
 
       - name: Run KMP Unit Tests

@@ -30,23 +30,58 @@ subprojects {
     version = projectVersion
 }
 
-// This Gradle task is responsible for writing the version number to the VERSION.txt file
-tasks.register("setBuildVersion") {
-    doLast {
-        // Get the new version number and build number from the command line parameters
-        val newVersion = project.properties["newVersion"] as String
-        val buildNumber = project.properties["buildNumber"] as String
+// Inherit from DefaultTask or a more suitable abstract class
+// Use @get:Input to mark these properties as task inputs
+abstract class SetBuildVersionTask : DefaultTask() {
+
+    // Use Property<String> to hold the version and build numbers, ensuring configuration cache compatibility
+    @get:Input
+    abstract val newVersion: Property<String>
+
+    @get:Input
+    abstract val buildNumber: Property<String>
+
+    @get:OutputFile
+    val versionFile = project.layout.projectDirectory.file("VERSION.txt")
+
+    // Use @TaskAction to annotate the task's execution logic
+    @TaskAction
+    fun execute() {
+        // Use .get() to retrieve the actual String value.
+        val version = newVersion.get()
+        val build = buildNumber.get()
+
+        logger.lifecycle(">> newVersion = $version, buildNumber = $build")
 
         // Combine the version number, format is "<SemVer>.<BuildNumber>"
         // For example: 1.2.3-beta.456
-        val combinedVersion = if (newVersion.contains("-")) {
-            "$newVersion.$buildNumber"
+
+        val combinedVersion = if (version.contains("-")) {
+            "$version.$build"
         } else {
-            "$newVersion-beta.$buildNumber"
+            "$version-beta.$build"
         }
 
-        // Write the combined version number to a file for subsequent build scripts to use
-        val versionFile = file("VERSION.txt")
-        versionFile.writeText(combinedVersion)
+        // Write the combined version number to a file
+        logger.lifecycle(">> write version to ${versionFile.asFile}")
+        versionFile.asFile.writeText(combinedVersion)
+
+        logger.lifecycle(">> Successfully set VERSION.txt to: $combinedVersion")
     }
+}
+
+// Register and configure the new task
+tasks.register<SetBuildVersionTask>("setBuildVersion") {
+    // Use providers.gradleProperty to safely get -P parameters
+    // If the property doesn't exist, it returns an unset Property.
+    val pNewVersion = project.providers.gradleProperty("newVersion")
+    val pBuildNumber = project.providers.gradleProperty("buildNumber")
+
+    // Use .set() to configure task properties.
+    newVersion.set(pNewVersion)
+    buildNumber.set(pBuildNumber)
+
+    // Configure group and description
+    group = "versioning"
+    description = "Writes the project version and build number to VERSION.txt."
 }
