@@ -1,3 +1,11 @@
+## [0.7.1](https://github.com/lackary/api-client-kmp/compare/0.7.0...0.7.1) (2025-11-06)
+
+
+### Bug Fixes
+
+* **ci:** resolve iphonesimulator wasn't found in GitHub Action ([95d1e98](https://github.com/lackary/api-client-kmp/commit/95d1e98744447345d536bea030d82097e0b5ac9d))
+* **ci:** resolve null cast error in setBuildVersion task ([d34ebe6](https://github.com/lackary/api-client-kmp/commit/d34ebe6d593d93a9113e4435e579e7db8ea58e0a))
+
 # [0.7.0](https://github.com/lackary/api-client-kmp/compare/0.6.0...0.7.0) (2025-11-05)
 
 
