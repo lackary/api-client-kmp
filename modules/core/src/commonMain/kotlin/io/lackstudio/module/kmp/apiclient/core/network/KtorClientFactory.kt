@@ -9,6 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.resources.Resources
 import io.ktor.http.contentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
@@ -35,6 +36,9 @@ object KtorClientFactory {
         clientConfig: KtorHttpClientConfig<*>.() -> Unit = {}
     ): HttpClient {
         return HttpClient(engineFactory) {
+
+            install(Resources)
+
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -42,10 +46,12 @@ object KtorClientFactory {
                     ignoreUnknownKeys = true
                 })
             }
+
             install(Logging) {
                 this.logger = logger
                 this.level = ktorConfig.logLevel
             }
+
             install(HttpTimeout) {
                 requestTimeoutMillis = ktorConfig.requestTimeoutMillis
                 connectTimeoutMillis = ktorConfig.connectTimeoutMillis

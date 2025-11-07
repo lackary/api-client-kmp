@@ -4,13 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
@@ -18,14 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +37,7 @@ import com.mmk.kmpauth.google.GoogleButtonUiContainer
 import com.mmk.kmpauth.uihelper.google.GoogleSignInButton
 import com.mmk.kmpauth.uihelper.google.GoogleSignInButtonIconOnly
 import dev.gitlive.firebase.auth.FirebaseUser
+import io.ktor.client.HttpClient
 import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
 import io.lackstudio.module.kmp.apiclient.app.platform.getUnsplashAccessKey
 import io.lackstudio.module.kmp.apiclient.app.ui.intent.HomeUiIntent
@@ -55,7 +48,7 @@ import io.lackstudio.module.kmp.apiclient.composeapp.generated.resources.compose
 import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
 import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
-import io.lackstudio.module.kmp.apiclient.core.network.buildUrlWithQueryParams
+import io.lackstudio.module.kmp.apiclient.core.network.extension.hrefWithHost
 import io.lackstudio.module.kmp.apiclient.ui.component.OAuthWebViewBottomSheet
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import io.lackstudio.module.kmp.apiclient.core.network.oauth.model.UnsplashAuthorizeRequest
@@ -72,6 +65,7 @@ import org.koin.compose.koinInject
 fun App() {
     val appLogger: AppLogger = koinInject()
     val appViewModel: AppViewModel = koinInject()
+    val client: HttpClient = koinInject()
 
     appLogger.info("AppKt", "App MaterialTheme create.")
 
@@ -183,17 +177,17 @@ fun App() {
                 Text("Open WebView")
             }
 
-                val authRequest = UnsplashAuthorizeRequest(
-                    clientId = getUnsplashAccessKey(),
-                    redirectUri = AppEnvironment.AUTH_REDIRECT_URL,
-                    responseType = "code",
-                    scope = "public"
-                )
-                val authorizeRequestUrl = buildUrlWithQueryParams(
-                    host = UnsplashEnvironment.HOST_NAME,
-                    pathSegments = UnsplashEnvironment.OAUTH_PATH_SEGMENTS,
-                    queryParams = authRequest,
-                )
+            val authRequest = UnsplashAuthorizeRequest(
+                clientId = getUnsplashAccessKey(),
+                redirectUri = AppEnvironment.AUTH_REDIRECT_URL,
+                responseType = "code",
+                scope = "public"
+            )
+            val authorizeRequestUrl = client.hrefWithHost(
+                host = UnsplashEnvironment.HOST_NAME,
+                resource = authRequest
+            )
+            appLogger.info("Appkt", "authorizeRequestUrl = $authorizeRequestUrl")
 
             // Show the Bottom Sheet
             OAuthWebViewBottomSheet(
