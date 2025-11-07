@@ -11,6 +11,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.request.UnsplashTokenRequest
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashTokenResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashUserResponse
 
 class UnsplashApiServiceImpl(
     private val httpClient: HttpClient,
@@ -21,7 +22,7 @@ class UnsplashApiServiceImpl(
         page: Int,
         perPage: Int
     ): List<UnsplashPhotoResponse> {
-        appLogger.info(tag = TAG, message = "getPhotos page $page, perPage $perPage")
+        appLogger.debug(tag = TAG, message = "getPhotos page $page, perPage $perPage")
         return httpClient.get(Environment.API_PHOTOS) {
             parameter("page", page)
             parameter("per_page", perPage)
@@ -29,8 +30,13 @@ class UnsplashApiServiceImpl(
     }
 
     override suspend fun getPhoto(id: String): UnsplashPhotoResponse {
-        appLogger.info(tag = TAG, message = "getPhoto id $id")
+        appLogger.debug(tag = TAG, message = "getPhoto id $id")
         return httpClient.get("${Environment.API_PHOTOS}/$id").body()
+    }
+
+    override suspend fun getMe(): UnsplashUserResponse {
+        appLogger.debug(tag = TAG, message = "getMe")
+        return httpClient.get(Environment.API_ME).body()
     }
 
     override suspend fun postOauthToken(

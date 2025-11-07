@@ -6,9 +6,11 @@ import io.lackstudio.module.kmp.apiclient.unsplash.data.remote.RemoteUnsplashDat
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthCode
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthToken
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhoto
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashUser
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.repository.UnsplashRepository
 import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toUnsplashOAuthToken
 import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toUnsplashPhoto
+import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toUnsplashUser
 
 internal class UnsplashRepositoryImpl(
     private val remoteUnsplashDataSource: RemoteUnsplashDataSource,
@@ -25,6 +27,12 @@ internal class UnsplashRepositoryImpl(
         return remoteUnsplashDataSource.getPhoto(id).toDomainAndThrowIfFailed { photo ->
 //            localUnsplashPhotoDataSource.savePhoto(photo)
             photo.toUnsplashPhoto()
+        }
+    }
+
+    override suspend fun getMe(): UnsplashUser {
+        return remoteUnsplashDataSource.getMe().toDomainAndThrowIfFailed { user ->
+            user.toUnsplashUser()
         }
     }
 

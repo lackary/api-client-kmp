@@ -4,6 +4,7 @@ import io.lackstudio.module.kmp.apiclient.core.network.error.toResult
 import io.lackstudio.module.kmp.apiclient.unsplash.data.api.UnsplashApiService
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashPhotoResponse
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashTokenResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashUserResponse
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthCode
 import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toUnsplashTokenRequest
 
@@ -16,6 +17,10 @@ class RemoteUnsplashDataSourceImpl(
 
     override suspend fun getPhoto(id: String): Result<UnsplashPhotoResponse> {
         return toResult { unsplashApiService.getPhoto(id) }
+    }
+
+    override suspend fun getMe(): Result<UnsplashUserResponse> {
+        return toResult { unsplashApiService.getMe() }
     }
 
     override suspend fun exchangeOAuth(oAuthCode: UnsplashOAuthCode): Result<UnsplashTokenResponse> {
