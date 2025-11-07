@@ -16,6 +16,7 @@ import io.lackstudio.module.kmp.apiclient.unsplash.data.repository.UnsplashRepos
 import io.lackstudio.module.kmp.apiclient.unsplash.data.remote.RemoteUnsplashDataSource
 import io.lackstudio.module.kmp.apiclient.unsplash.data.remote.RemoteUnsplashDataSourceImpl
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.ExchangeOAuthUseCase
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.GetMeUseCase
 import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.GetPhotoUseCase
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.GetPhotosUseCase
@@ -53,4 +54,5 @@ fun unsplashModule(tokenType: String, token: String) = module {
     factory { GetPhotosUseCase(get()) }
     factory { GetPhotoUseCase(get()) }
     factory { ExchangeOAuthUseCase(get()) }
+    factory { GetMeUseCase(get()) }
 }
