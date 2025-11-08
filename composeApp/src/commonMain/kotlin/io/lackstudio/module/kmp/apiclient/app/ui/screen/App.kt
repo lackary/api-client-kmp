@@ -40,6 +40,7 @@ import dev.gitlive.firebase.auth.FirebaseUser
 import io.ktor.client.HttpClient
 import io.lackstudio.module.kmp.apiclient.app.di.viewModelModule
 import io.lackstudio.module.kmp.apiclient.app.platform.getUnsplashAccessKey
+import io.lackstudio.module.kmp.apiclient.app.ui.event.HomeUiEvent
 import io.lackstudio.module.kmp.apiclient.app.ui.intent.HomeUiIntent
 import io.lackstudio.module.kmp.apiclient.app.ui.viewmodel.AppViewModel
 import io.lackstudio.module.kmp.apiclient.app.utils.Environment as AppEnvironment
@@ -50,10 +51,8 @@ import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.core.network.extension.hrefWithHost
 import io.lackstudio.module.kmp.apiclient.ui.component.OAuthWebViewBottomSheet
-import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import io.lackstudio.module.kmp.apiclient.core.network.oauth.model.UnsplashAuthorizeRequest
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthToken
 import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment as UnsplashEnvironment
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -197,34 +196,26 @@ fun App() {
                     appViewModel.processIntent(HomeUiIntent.ExchangeOAuth(code))
                 }
             ) { onExecuteJavascript ->
-                // *** Key Step: Observe state and execute side effects ***
-                LaunchedEffect(uiState.oAuthToken) {
-                    when (val state = uiState.oAuthToken) {
-                        // When Access Token is successfully obtained
-                        is AppUiState.Success<UnsplashOAuthToken> -> {
-                            appLogger.info("AppKt", "Token Exchange Success!")
+                LaunchedEffect(Unit) {
+                    appViewModel.eventsFlow.collect { event ->
+                        appLogger.debug("Appkt", "event $event")
+                        when (event) {
+                            is HomeUiEvent.ShowAuthSuccess -> {
+                                appLogger.debug("AppKt", "ShowAuthSuccess")
+                                val jsCall = "displayExchangeSuccess('${event.tokenType}')".trimIndent()
+                                onExecuteJavascript(jsCall)
+                            }
 
-                            // *** Close the Bottom Sheet ***
-//                            showWebViewSheet.value = false
-                            appViewModel.processIntent(HomeUiIntent.LoadPhotos)
-                            val jsCall = "displayExchangeSuccess('${state.data.tokenType}')".trimIndent()
-                            onExecuteJavascript(jsCall)
+                            is HomeUiEvent.ShowAuthError -> {
+                                appLogger.debug("AppKt", "ShowAuthError")
+                                val jsCall = "displayAuthError('${event.message}')".trimIndent()
+                                onExecuteJavascript(jsCall)
+                            }
+
+                            is HomeUiEvent.ShowAuthProfile -> {
+                                appLogger.debug("AppKt", "ShowAuthProfile")
+                            }
                         }
-
-                        // When token exchange fails
-                        is AppUiState.Error -> {
-                            appLogger.error("AppKt", "Token Exchange Failed: ${state.message}")
-
-                            // *** Do not close the Bottom Sheet ***
-                            // Keep the WebView open so the user can see the error, retry, or close it manually.
-                            val errorMessage = state.message
-
-                            // *** Call JavaScript function to display the error ***
-                            val jsCall = "displayAuthError('${errorMessage}')".trimIndent()
-                            onExecuteJavascript(jsCall)
-                        }
-
-                        else -> {}
                     }
                 }
             }
