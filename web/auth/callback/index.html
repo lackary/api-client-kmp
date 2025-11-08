@@ -1,194 +1,316 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OAuth Redirect</title>
-    <style>
-        :root {
-            /* Define color variables */
-            --primary-color: #1a73e8; /* Similar to Google Blue or the dark blue in your image */
-            --secondary-color: #a8d5ff; /* Light blue (for the tail of the pulse) */
-        }
-
-        body {
-          font-family: system-ui, sans-serif;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          margin: 0;
-          background-color: #fff;
-        }
-        .container {
-          max-width: 600px;
-          text-align: center;
-        }
-        code {
-          background: #f0f0f0;
-          padding: 0.3rem 0.6rem;
-          border-radius: 6px;
-        }
-
-        /* --- Added CSS styles --- */
-        /* --- Success Message Style --- */
-        #success-message {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-            font-weight: bold;
-            display: none; /* Hidden by default */
-        }
-
-        /* --- Dynamic Error Message Style --- */
-        #error-message {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8d7da; /* Light red background */
-            color: #721c24; /* Dark red text */
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-            font-weight: bold;
-            display: none; /* Hidden by default */
-        }
-
-        /* --- Pulsing animation progress bar --- */
-        .pulse-bar {
-
-            height: 12px; /* Height of the progress bar */
-            background-color: transparent;
-            position: relative;
-            overflow: hidden;
-            margin-top: 15px;
-            border-radius: 6px; /* Rounded corners */
-            /* Horizontal centering */
-            margin-left: 16px;
-            margin-right: 16px;
-        }
-
-        .pulse-bar-track {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 6px;
-            background-color: var(--secondary-color); /* Light blue background, simulating the light part of the image */
-        }
-
-        .pulse-bar-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(
-                90deg,
-                var(--secondary-color) 0%,
-                var(--primary-color) 50%,
-                var(--secondary-color) 100%
-            );
-            border-radius: 6px;
-            /* Apply animation */
-            animation: pulseSlide 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
-            transform: translateX(-100%); /* Initial position: hidden on the left */
-        }
-
-        @keyframes pulseSlide {
-            0% {
-                transform: translateX(-100%); /* Start: Completely on the left */
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>OAuth Redirect</title>
+        <style>
+            :root {
+                /* Define color variables */
+                --primary-color: #1a73e8; /* Similar to Google Blue or the dark blue in your image */
+                --secondary-color: #a8d5ff; /* Light blue (for the tail of the pulse) */
             }
-            100% {
-                transform: translateX(100%); /* End: Returns to the left, creating an infinite loop */
+
+            body {
+              font-family: system-ui, sans-serif;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              margin: 0;
+              background-color: #fff;
             }
-        }
-        /* --- End of added CSS styles --- */
+            .container {
+              max-width: 600px;
+              text-align: center;
+            }
+            code {
+              background: #f0f0f0;
+              padding: 0.3rem 0.6rem;
+              border-radius: 6px;
+            }
 
-    </style>
-</head>
-<body>
-        <div class="container">
-            <h2>OAuth Redirect</h2>
-            <p id="status">Waiting for authorization...</p>
-            <div id="loading-bar-container"></div>
-        </div>
-        <div id="success-message" style="display:none;"></div>
-        <div id="error-message" style="display:none;"></div>
-        <script>
-            const errorMessageContainer = document.getElementById('error-message');
-            const successMessageContainer = document.getElementById('success-message');
+            /* --- Added CSS styles --- */
+            /* --- Success Message Style --- */
+            #success-message {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                border-radius: 8px;
+                font-weight: bold;
+                display: none; /* Hidden by default */
+            }
 
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get("code");
-            const error = params.get("error");
+            /* --- Dynamic Error Message Style --- */
+            #error-message {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #f8d7da; /* Light red background */
+                color: #721c24; /* Dark red text */
+                border: 1px solid #f5c6cb;
+                border-radius: 8px;
+                font-weight: bold;
+                display: none; /* Hidden by default */
+            }
 
-            const status = document.getElementById("status");
-            const loadingBarContainer = document.getElementById("loading-bar-container");
+            /* --- Pulsing animation progress bar --- */
+            .pulse-bar {
 
-            if (error) {
-              status.innerHTML = `
-                <p>❌ Authorization Error:</p>
-                <p>Please close this window and try again.</p>
-              `;
-              loadingBarContainer.innerHTML = ""; // Remove animation on error
-            } else if (code) {
-              // Display processing message
-              status.innerHTML = "✅ Authorization code received, the app is processing it. Please wait...";
+                height: 12px; /* Height of the progress bar */
+                background-color: transparent;
+                position: relative;
+                overflow: hidden;
+                margin-top: 15px;
+                border-radius: 6px; /* Rounded corners */
+                /* Horizontal centering */
+                margin-left: 16px;
+                margin-right: 16px;
+            }
 
-              // Insert HTML for the animated line (using the new class)
-              loadingBarContainer.innerHTML = `
-                <div class="pulse-bar">
-                    <div class="pulse-bar-track"></div>
-                    <div class="pulse-bar-indicator"></div>
+            .pulse-bar-track {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 6px;
+                background-color: var(--secondary-color); /* Light blue background, simulating the light part of the image */
+            }
+
+            .pulse-bar-indicator {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                background: linear-gradient(
+                    90deg,
+                    var(--secondary-color) 0%,
+                    var(--primary-color) 50%,
+                    var(--secondary-color) 100%
+                );
+                border-radius: 6px;
+                /* Apply animation */
+                animation: pulseSlide 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+                transform: translateX(-100%); /* Initial position: hidden on the left */
+            }
+
+            @keyframes pulseSlide {
+                0% {
+                    transform: translateX(-100%); /* Start: Completely on the left */
+                }
+                100% {
+                    transform: translateX(100%); /* End: Returns to the left, creating an infinite loop */
+                }
+            }
+
+            /* --- User Info Styles --- */
+            #user-info-container {
+                margin-top: 30px;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                background-color: #f9f9f9;
+                width: 80%;
+                max-width: 300px;
+                display: flex; /* Initially hidden, will be displayed via JS */
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #profile-image-wrapper {
+                width: 100px; /* Same width and height, for a circle */
+                height: 100px;
+                overflow: hidden; /* Crop overflow */
+                border-radius: 50%; /* Circular image */
+                margin-bottom: 10px;
+                border: 3px solid var(--primary-color); /* Add a border to make the image stand out */
+            }
+
+            #profile-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Ensures the image covers the entire area, preventing distortion */
+            }
+
+            #signed-in-as {
+                font-size: 1.1em;
+                color: #333;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            #action-buttons {
+                display: flex;
+                gap: 15px; /* Spacing between buttons */
+                justify-content: center; /* Center buttons */
+                width: 100%;
+            }
+
+            #action-buttons button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                flex-grow: 1;
+                max-width: 120px;
+            }
+
+            #confirm-button {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            #cancel-button {
+                background-color: #f0f0f0;
+                color: #333;
+                border: 1px solid #ccc;
+            }
+            /* --- End of added CSS styles --- */
+
+        </style>
+    </head>
+    <body>
+            <div class="container">
+                <h2>OAuth Redirect</h2>
+                <p id="status">Waiting for authorization...</p>
+                <div id="loading-bar-container"></div>
+            </div>
+            <div id="success-message" style="display:none;"></div>
+            <div id="error-message" style="display:none;"></div>
+            <div id="user-info-container" style="display:none;">
+                <div id="profile-image-wrapper">
+                    <img id="profile-image" src="" alt="User Profile Image">
                 </div>
-              `;
+                <p id="signed-in-as"></p>
+                <div id="action-buttons">
+                    <button id="confirm-button">Confirm</button>
+                    <button id="cancel-button">Cancel</button>
+                </div>
+            </div>
+            <script>
+                const errorMessageContainer = document.getElementById('error-message');
+                const successMessageContainer = document.getElementById('success-message');
 
-              // Wait for the KMP code to close the WebView
+                const params = new URLSearchParams(window.location.search);
+                const code = params.get("code");
+                const error = params.get("error");
 
-            } else {
-              status.innerHTML = "⚠️ Authorization code not found in URL.";
-              loadingBarContainer.innerHTML = "";
-            }
+                const status = document.getElementById("status");
+                const loadingBarContainer = document.getElementById("loading-bar-container");
 
-            // --------------------------------------------------------
-            // External functions called by KMP code (to display final result)
-            // --------------------------------------------------------
+                if (error) {
+                  status.innerHTML = `
+                    <p>❌ Authorization Error:</p>
+                    <p>Please close this window and try again.</p>
+                  `;
+                  loadingBarContainer.innerHTML = ""; // Remove animation on error
+                } else if (code) {
+                  // Display processing message
+                  status.innerHTML = "✅ Authorization code received, the app is processing it. Please wait...";
 
-            // *** New: Receive and display Token Exchange success message from Kotlin/Compose ***
-            function displayExchangeSuccess(tokenType) {
-                // Hide all processing states
-                status.innerHTML = "";
-                loadingBarContainer.innerHTML = "";
-                errorMessageContainer.style.display = 'none';
+                  // Insert HTML for the animated line (using the new class)
+                  loadingBarContainer.innerHTML = `
+                    <div class="pulse-bar">
+                        <div class="pulse-bar-track"></div>
+                        <div class="pulse-bar-indicator"></div>
+                    </div>
+                  `;
 
-                // Show success message
-                successMessageContainer.innerHTML = `
-                    <p>✅ **Token Exchange Successful!**</p>
-                    <p>Authorization Type: <code>${tokenType}</code></p>
-                    <p>You can now close this window.</p>
-                `;
-                successMessageContainer.style.display = 'block';
-            }
+                  // Wait for the KMP code to close the WebView
 
-            // *** Update: Receive and display error message from Kotlin/Compose ***
-            function displayAuthError(errorMessage) {
-                // Hide all processing states
-                status.innerHTML = "";
-                loadingBarContainer.innerHTML = "";
-                successMessageContainer.style.display = 'none';
+                } else {
+                  status.innerHTML = "⚠️ Authorization code not found in URL.";
+                  loadingBarContainer.innerHTML = "";
+                }
 
-                // 顯示錯誤訊息
-                errorMessageContainer.innerHTML = `
-                    <p>❌ **Access Token Error:**</p>
-                    <p>${errorMessage}</p>
-                    <p>Please check your API Key/Secret.</p>
-                `;
-                errorMessageContainer.style.display = 'block';
-            }
-        </script>
-    </body>
-</html>
+                // --------------------------------------------------------
+                // External functions called by KMP code (to display final result)
+                // --------------------------------------------------------
+
+                // *** Receive and display user info with confirmation buttons ***
+                function displayUserInfo(imageUrl, userName) {
+                    // Hide all processing states
+                    const status = document.getElementById('status');
+                    const loadingBarContainer = document.getElementById('loading-bar-container');
+                    const errorMessageContainer = document.getElementById('error-message');
+                    const successMessageContainer = document.getElementById('success-message');
+
+                    status.innerHTML = "";
+                    loadingBarContainer.innerHTML = "";
+                    errorMessageContainer.style.display = 'none';
+                    successMessageContainer.style.display = 'none';
+
+                    // Display the user info container
+                    const userInfoContainer = document.getElementById('user-info-container');
+                    userInfoContainer.style.display = 'flex';
+
+                    // Set user information
+                    document.getElementById('profile-image').src = imageUrl;
+                    document.getElementById('signed-in-as').innerHTML = `Signed in as <b>${userName}</b>`;
+
+                    // --------------------------------------------------------
+                    // Button click event logic
+                    // --------------------------------------------------------
+
+                    // Assume Kotlin/Compose exposes an interface named kmpAuthInterface to close the sheet.
+                    function sendConfirmation(isConfirmed) {
+                        if (window.kmpAuthInterface && window.kmpAuthInterface.closeAuthSheet) {
+                            // Call the Kotlin/Compose function, passing the confirmation status (true/false)
+                            window.kmpAuthInterface.closeAuthSheet(isConfirmed);
+                        } else {
+                            // Alert for simulation/testing environment
+                            alert(`Action: ${isConfirmed ? 'Confirm Sign-In' : 'Cancel and Delete Cookies'}`);
+                        }
+                    }
+
+                    // ** Confirm Button (closes the WebView) **
+                    document.getElementById('confirm-button').onclick = function() {
+                        sendConfirmation(true);
+                    };
+
+                    // ** Cancel Button (deletes cookies and closes the WebView) **
+                    document.getElementById('cancel-button').onclick = function() {
+                        // JS logic to delete cookies can be added here, but it's recommended to handle
+                        // token/cookie deletion on the Compose/Kotlin side.
+                        sendConfirmation(false);
+                    };
+                }
+
+                function displayExchangeSuccess(tokenType) {
+                    // Hide all processing states
+                    status.innerHTML = "";
+                    loadingBarContainer.innerHTML = "";
+                    errorMessageContainer.style.display = 'none';
+
+                    // Show success message
+                    successMessageContainer.innerHTML = `
+                        <p>✅ **Token Exchange Successful!**</p>
+                        <p>Authorization Type: <code>${tokenType}</code></p>
+                        <p>You can now close this window.</p>
+                    `;
+                    successMessageContainer.style.display = 'block';
+                }
+
+                // *** Update: Receive and display error message from Kotlin/Compose ***
+                function displayAuthError(errorMessage) {
+                    // Hide all processing states
+                    status.innerHTML = "";
+                    loadingBarContainer.innerHTML = "";
+                    successMessageContainer.style.display = 'none';
+
+                    // Display the error message
+                    errorMessageContainer.innerHTML = `
+                        <p>❌ **Access Token Error:**</p>
+                        <p>${errorMessage}</p>
+                        <p>Please check your API Key/Secret.</p>
+                    `;
+                    errorMessageContainer.style.display = 'block';
+                }
+            </script>
+        </body>
+    </html>

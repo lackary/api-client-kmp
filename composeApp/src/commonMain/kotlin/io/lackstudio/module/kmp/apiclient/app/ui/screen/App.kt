@@ -214,6 +214,8 @@ fun App() {
 
                             is HomeUiEvent.ShowAuthProfile -> {
                                 appLogger.debug("AppKt", "ShowAuthProfile")
+//                                val jsCall = "displayUserInfo('${event.profileImageUrl}', '${event.username}')".trimIndent()
+//                                onExecuteJavascript(jsCall)
                             }
                         }
                     }
