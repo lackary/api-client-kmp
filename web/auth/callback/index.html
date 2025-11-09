@@ -261,7 +261,9 @@
                     function sendConfirmation(isConfirmed) {
                         if (window.kmpJsBridge && window.kmpJsBridge.callNative) {
                             // Call the Kotlin/Compose function, passing the confirmation status (true/false)
-                            window.kmpJsBridge.callNative("OAuthSignIn", isConfirmed,
+                            // The parameters to send to the Native. It needs to be a JSON string or simple string.
+                            var isConfirmedString = isConfirmed ? "true" : "false";
+                            window.kmpJsBridge.callNative("OAuthSignIn", isConfirmedString,
                                 function(nativeResponse) {
                                     console.log("Native call success:", response);
                                 }

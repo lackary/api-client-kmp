@@ -1,10 +1,8 @@
 package io.lackstudio.module.kmp.apiclient.ui.utils
 
-import androidx.compose.runtime.MutableState
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.web.WebViewNavigator
-import com.multiplatform.webview.web.WebViewState
 
 class OAuthSignInJsMessageHandler(
     private val jsCallback: (isConfirm: String) -> Unit
@@ -20,7 +18,7 @@ class OAuthSignInJsMessageHandler(
         val responseText = "KMM Received message. Params: ${message.params}"
 
         println(responseText)
-        this.jsCallback(responseText)
+        this.jsCallback(message.params)
 
         // **Execute Callback**: Pass the result back to the JavaScript function on the web side.
         // The input must be a string.
