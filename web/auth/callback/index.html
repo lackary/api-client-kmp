@@ -12,23 +12,23 @@
             }
 
             body {
-              font-family: system-ui, sans-serif;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              height: 100vh;
-              margin: 0;
-              background-color: #fff;
+                font-family: system-ui, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #fff;
             }
             .container {
-              max-width: 600px;
-              text-align: center;
+                max-width: 600px;
+                text-align: center;
             }
             code {
-              background: #f0f0f0;
-              padding: 0.3rem 0.6rem;
-              border-radius: 6px;
+                background: #f0f0f0;
+                padding: 0.3rem 0.6rem;
+                border-radius: 6px;
             }
 
             /* --- Added CSS styles --- */
@@ -204,28 +204,28 @@
                 const loadingBarContainer = document.getElementById("loading-bar-container");
 
                 if (error) {
-                  status.innerHTML = `
-                    <p>❌ Authorization Error:</p>
-                    <p>Please close this window and try again.</p>
-                  `;
+                    status.innerHTML = `
+                        <p>❌ Authorization Error:</p>
+                        <p>Please close this window and try again.</p>
+                    `;
                   loadingBarContainer.innerHTML = ""; // Remove animation on error
                 } else if (code) {
-                  // Display processing message
-                  status.innerHTML = "✅ Authorization code received, the app is processing it. Please wait...";
+                    // Display processing message
+                    status.innerHTML = "✅ Authorization code received, the app is processing it. Please wait...";
 
-                  // Insert HTML for the animated line (using the new class)
-                  loadingBarContainer.innerHTML = `
-                    <div class="pulse-bar">
-                        <div class="pulse-bar-track"></div>
-                        <div class="pulse-bar-indicator"></div>
-                    </div>
-                  `;
+                    // Insert HTML for the animated line (using the new class)
+                    loadingBarContainer.innerHTML = `
+                        <div class="pulse-bar">
+                            <div class="pulse-bar-track"></div>
+                            <div class="pulse-bar-indicator"></div>
+                        </div>
+                    `;
 
                   // Wait for the KMP code to close the WebView
 
                 } else {
-                  status.innerHTML = "⚠️ Authorization code not found in URL.";
-                  loadingBarContainer.innerHTML = "";
+                    status.innerHTML = "⚠️ Authorization code not found in URL.";
+                    loadingBarContainer.innerHTML = "";
                 }
 
                 // --------------------------------------------------------
@@ -259,9 +259,13 @@
 
                     // Assume Kotlin/Compose exposes an interface named kmpAuthInterface to close the sheet.
                     function sendConfirmation(isConfirmed) {
-                        if (window.kmpAuthInterface && window.kmpAuthInterface.closeAuthSheet) {
+                        if (window.kmpJsBridge && window.kmpJsBridge.callNative) {
                             // Call the Kotlin/Compose function, passing the confirmation status (true/false)
-                            window.kmpAuthInterface.closeAuthSheet(isConfirmed);
+                            window.kmpJsBridge.callNative("OAuthSignIn", isConfirmed,
+                                function(nativeResponse) {
+                                    console.log("Native call success:", response);
+                                }
+                            );
                         } else {
                             // Alert for simulation/testing environment
                             alert(`Action: ${isConfirmed ? 'Confirm Sign-In' : 'Cancel and Delete Cookies'}`);

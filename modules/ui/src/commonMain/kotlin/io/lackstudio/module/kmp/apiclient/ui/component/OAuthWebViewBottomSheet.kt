@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewFileReadType
@@ -31,6 +32,7 @@ import com.multiplatform.webview.web.rememberWebViewState
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLFile
 import io.ktor.http.Url
 import io.lackstudio.module.kmp.apiclient.ui.generated.resources.Res
+import io.lackstudio.module.kmp.apiclient.ui.utils.OAuthSignInJsMessageHandler
 import kotlinx.coroutines.launch
 
 
@@ -79,6 +81,29 @@ fun  OAuthWebViewBottomSheet(
     val currentUrlString = webViewState.lastLoadedUrl
 
     val coroutineScope = rememberCoroutineScope()
+
+    // Create a JavaScript Bridge
+    val jsBridge = rememberWebViewJsBridge()
+
+    // Register the Native message handler (only executed when the Composable is first created)
+    LaunchedEffect(jsBridge) {
+        jsBridge.register(OAuthSignInJsMessageHandler { isConfirm ->
+            if (isConfirm == "true") {
+                println("Sign In")
+                showSheet.value = false
+            } else {
+                println("Sign Out")
+                coroutineScope.launch {
+                    // 1. Clear WebView Cookies
+                    webViewState.cookieManager.removeAllCookies()
+//            webViewState.cookieManager.removeCookies(url) it's doesn't work
+                    // 2. Reload the original URL (force reload of the login page)
+                    println("Reload Url: $url")
+                    webViewNavigator.loadUrl(url)
+                }
+            }
+        })
+    }
 
     // *** Logic for clear/logout operation ***
     val onClearAndReloadClicked: () -> Unit = {
@@ -184,6 +209,7 @@ fun  OAuthWebViewBottomSheet(
                 WebView(
                     state = webViewState,
                     navigator = webViewNavigator,
+                    webViewJsBridge = jsBridge,
                     // Let WebView fill the remaining space of the Column
                     modifier = Modifier.fillMaxSize()
                 )

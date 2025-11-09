@@ -202,8 +202,8 @@ fun App() {
                         when (event) {
                             is HomeUiEvent.ShowAuthSuccess -> {
                                 appLogger.debug("AppKt", "ShowAuthSuccess")
-                                val jsCall = "displayExchangeSuccess('${event.tokenType}')".trimIndent()
-                                onExecuteJavascript(jsCall)
+//                                val jsCall = "displayExchangeSuccess('${event.tokenType}')".trimIndent()
+//                                onExecuteJavascript(jsCall)
                             }
 
                             is HomeUiEvent.ShowAuthError -> {
@@ -214,8 +214,8 @@ fun App() {
 
                             is HomeUiEvent.ShowAuthProfile -> {
                                 appLogger.debug("AppKt", "ShowAuthProfile")
-//                                val jsCall = "displayUserInfo('${event.profileImageUrl}', '${event.username}')".trimIndent()
-//                                onExecuteJavascript(jsCall)
+                                val jsCall = "displayUserInfo('${event.profileImageUrl}', '${event.username}')".trimIndent()
+                                onExecuteJavascript(jsCall)
                             }
                         }
                     }
