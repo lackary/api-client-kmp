@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -35,7 +34,6 @@ import io.lackstudio.module.kmp.apiclient.ui.generated.resources.Res
 import io.lackstudio.module.kmp.apiclient.ui.utils.OAuthSignInJsMessageHandler
 import kotlinx.coroutines.launch
 
-
 const val CODE = "code"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +41,7 @@ const val CODE = "code"
 fun  OAuthWebViewBottomSheet(
     url: String,
     // Used to control the opening and closing of the Bottom Sheet
-    showSheet: MutableState<Boolean>,
+    onDismissRequest: () -> Unit,
     onAuthCodeReceived: (code: String) -> Unit,
     content: @Composable (onExecuteJavascript: (String) -> Unit) -> Unit = {}
 ) {
@@ -81,30 +79,6 @@ fun  OAuthWebViewBottomSheet(
     val currentUrlString = webViewState.lastLoadedUrl
 
     val coroutineScope = rememberCoroutineScope()
-
-    // Create a JavaScript Bridge
-    val jsBridge = rememberWebViewJsBridge()
-
-    // Register the Native message handler (only executed when the Composable is first created)
-    LaunchedEffect(jsBridge) {
-        jsBridge.register(OAuthSignInJsMessageHandler { isConfirm ->
-            if (isConfirm == "true") {
-                println("Sign In")
-                showSheet.value = false
-            } else {
-                println("Sign Out")
-                coroutineScope.launch {
-                    // 1. Clear WebView Cookies
-                    webViewState.cookieManager.removeAllCookies()
-//            webViewState.cookieManager.removeCookies(url) it's doesn't work
-                    // 2. Reload the original URL (force reload of the login page)
-                    println("Reload Url: $url")
-                    webViewNavigator.loadUrl(url)
-                }
-            }
-        })
-    }
-
     // *** Logic for clear/logout operation ***
     val onClearAndReloadClicked: () -> Unit = {
         coroutineScope.launch {
@@ -115,6 +89,23 @@ fun  OAuthWebViewBottomSheet(
             println("Reload Url: $url")
             webViewNavigator.loadUrl(url)
         }
+    }
+
+    // Create a JavaScript Bridge
+    val jsBridge = rememberWebViewJsBridge()
+
+    // Register the Native message handler (only executed when the Composable is first created)
+    LaunchedEffect(jsBridge) {
+        println("KMP JS Bridge registering handler for OAuthSignIn")
+        jsBridge.register(OAuthSignInJsMessageHandler { isConfirm ->
+            if (isConfirm == "true") {
+                println("Sign In")
+                onDismissRequest()
+            } else {
+                println("Sign Out")
+                onClearAndReloadClicked()
+            }
+        })
     }
 
     // *** JS executor (for error handling) ***
@@ -137,6 +128,7 @@ fun  OAuthWebViewBottomSheet(
                     it.key to (it.value.firstOrNull() ?: "")
                 }
             } catch (e: Exception) {
+                println("the error exception: ${e.message}")
                 // Handle invalid URL format errors
                 emptyMap()
             }
@@ -155,76 +147,69 @@ fun  OAuthWebViewBottomSheet(
         }
     }
 
-    if (showSheet.value) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                // When the user clicks the background or swipes to close, set the state to false
-                showSheet.value = false
-            },
-            sheetState = sheetState,
-            // You can adjust the Modifier of the Bottom Sheet
-            modifier = Modifier.fillMaxWidth()
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        // You can adjust the Modifier of the Bottom Sheet
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Place the WebView inside the Bottom Sheet
+        Column(
+            // *** Key fix: apply fillMaxHeight(0.8f) to the root container of the content ***
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f) // <--- Set to 80% (0.8f) here
         ) {
-            // Place the WebView inside the Bottom Sheet
-            Column(
-                // *** Key fix: apply fillMaxHeight(0.8f) to the root container of the content ***
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.8f) // <--- Set to 80% (0.8f) here
+            // --- Top area: place the clear button ---
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.Center // Center the button
             ) {
-                // --- Top area: place the clear button ---
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.Center // Center the button
+                Button(
+                    onClick = onClearAndReloadClicked,
+                    // Slightly shrink the button
+                    modifier = Modifier.height(40.dp)
                 ) {
-                    Button(
-                        onClick = onClearAndReloadClicked,
-                        // Slightly shrink the button
-                        modifier = Modifier.height(40.dp)
-                    ) {
-                        Text("Clear Cache and Reload")
-                    }
+                    Text("Clear Cache and Reload")
                 }
-
-                // Check if loadingState is LoadingState.Loading
-                val loadingState = webViewState.loadingState
-                if (loadingState is LoadingState.Loading) {
-                    println("Loading...")
-                    // Use LinearProgressIndicator to display progress
-                    LinearProgressIndicator(
-                        progress = {
-                            loadingState.progress // Use the progress provided by WebViewState
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = ProgressIndicatorDefaults.linearColor,
-                        trackColor = ProgressIndicatorDefaults.linearTrackColor,
-                        strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
-                    )
-                } else {
-                    println("Loading complete.")
-//                    val jsErrorCall = "displayAuthError('eeerrrooorrr')".trimIndent()
-//                    onExecuteJavascript(jsErrorCall)
-                }
-                // WebView component
-                WebView(
-                    state = webViewState,
-                    navigator = webViewNavigator,
-                    webViewJsBridge = jsBridge,
-                    // Let WebView fill the remaining space of the Column
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                content(onExecuteJavascript)
             }
 
-            // Note: WebView handling of nested scrolling in Compose,
-            // especially on the iOS platform, can sometimes cause issues (e.g., swiping the WebView closes the Bottom Sheet).
-            // This is due to the complexity of interaction between native Views and Compose.
-            //
-            // If you encounter scrolling issues, ensure you are using a newer version of the WebView library,
-            // and you may need to check the library's or Compose Multiplatform's Issue Tracker for a workaround.
-            //
-            // For Android, `AndroidView` (in the Android implementation) is typically used to handle nested scrolling issues.
+            // Check if loadingState is LoadingState.Loading
+            val loadingState = webViewState.loadingState
+            if (loadingState is LoadingState.Loading) {
+                println("Loading...")
+                // Use LinearProgressIndicator to display progress
+                LinearProgressIndicator(
+                    progress = {
+                        loadingState.progress // Use the progress provided by WebViewState
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    color = ProgressIndicatorDefaults.linearColor,
+                    trackColor = ProgressIndicatorDefaults.linearTrackColor,
+                    strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                )
+            } else {
+                println("Loading complete.")
+            }
+            // WebView component
+            WebView(
+                state = webViewState,
+                navigator = webViewNavigator,
+                webViewJsBridge = jsBridge,
+                // Let WebView fill the remaining space of the Column
+                modifier = Modifier.fillMaxSize()
+            )
+
+            content(onExecuteJavascript)
         }
+
+        // Note: WebView handling of nested scrolling in Compose,
+        // especially on the iOS platform, can sometimes cause issues (e.g., swiping the WebView closes the Bottom Sheet).
+        // This is due to the complexity of interaction between native Views and Compose.
+        //
+        // If you encounter scrolling issues, ensure you are using a newer version of the WebView library,
+        // and you may need to check the library's or Compose Multiplatform's Issue Tracker for a workaround.
+        //
+        // For Android, `AndroidView` (in the Android implementation) is typically used to handle nested scrolling issues.
     }
 }

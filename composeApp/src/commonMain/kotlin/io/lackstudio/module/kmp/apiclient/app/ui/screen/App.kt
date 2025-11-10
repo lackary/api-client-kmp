@@ -70,17 +70,21 @@ fun App() {
 
     Logger.withTag("AppKt").i { "Kermit test" }
 
-    // MVVM stateFlow
-    val photoUiState by appViewModel.photoUiState.collectAsState()
+//    // MVVM stateFlow
+//    val photoUiState by appViewModel.photoUiState.collectAsState()
+//
+//    // MVVM received data
+//    LaunchedEffect(key1 = Unit) {
+//        appViewModel.loadPhotos()
+//    }
+
     // MVI stateFLow
     val uiState by appViewModel.uiState.collectAsState()
 
-    val showWebViewSheet = remember { mutableStateOf(false) }
+    // Use a nullable String to store the URL to be displayed. If it's null, the sheet is not shown.
+    // This controls the creation and destruction of the OAuthWebViewBottomSheet.
+    var authUrlToShow: String? by remember { mutableStateOf(null) }
 
-    // MVVM received data
-    LaunchedEffect(key1 = Unit) {
-        appViewModel.loadPhotos()
-    }
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(
@@ -171,11 +175,6 @@ fun App() {
                 DividerDefaults.color
             )
 
-            // Button or any action to open the Bottom Sheet
-            Button(onClick = { showWebViewSheet.value = true }) {
-                Text("Open WebView")
-            }
-
             val authRequest = UnsplashAuthorizeRequest(
                 clientId = getUnsplashAccessKey(),
                 redirectUri = AppEnvironment.AUTH_REDIRECT_URL,
@@ -186,36 +185,46 @@ fun App() {
                 host = UnsplashEnvironment.HOST_NAME,
                 resource = authRequest
             )
+
+            // Button or any action to open the Bottom Sheet
+            Button(onClick = { authUrlToShow = authorizeRequestUrl }) {
+                Text("Open WebView")
+            }
+
             appLogger.info("Appkt", "authorizeRequestUrl = $authorizeRequestUrl")
 
             // Show the Bottom Sheet
-            OAuthWebViewBottomSheet(
-                url = authorizeRequestUrl, // Replace with the URL you want to display
-                showSheet = showWebViewSheet,
-                onAuthCodeReceived = { code ->
-                    appViewModel.processIntent(HomeUiIntent.ExchangeOAuth(code))
-                }
-            ) { onExecuteJavascript ->
-                LaunchedEffect(Unit) {
-                    appViewModel.eventsFlow.collect { event ->
-                        appLogger.debug("Appkt", "event $event")
-                        when (event) {
-                            is HomeUiEvent.ShowAuthSuccess -> {
-                                appLogger.debug("AppKt", "ShowAuthSuccess")
+            authUrlToShow?.let {
+                OAuthWebViewBottomSheet(
+                    url = authorizeRequestUrl, // Replace with the URL you want to display
+                    onDismissRequest = {
+                        authUrlToShow = null
+                    },
+                    onAuthCodeReceived = { code ->
+                        appViewModel.processIntent(HomeUiIntent.ExchangeOAuth(code))
+                    }
+                ) { onExecuteJavascript ->
+                    LaunchedEffect(Unit) {
+                        appViewModel.eventsFlow.collect { event ->
+                            appLogger.debug("Appkt", "event $event")
+                            when (event) {
+                                is HomeUiEvent.ShowAuthSuccess -> {
+                                    appLogger.debug("AppKt", "ShowAuthSuccess")
 //                                val jsCall = "displayExchangeSuccess('${event.tokenType}')".trimIndent()
 //                                onExecuteJavascript(jsCall)
-                            }
+                                }
 
-                            is HomeUiEvent.ShowAuthError -> {
-                                appLogger.debug("AppKt", "ShowAuthError")
-                                val jsCall = "displayAuthError('${event.message}')".trimIndent()
-                                onExecuteJavascript(jsCall)
-                            }
+                                is HomeUiEvent.ShowAuthError -> {
+                                    appLogger.debug("AppKt", "ShowAuthError")
+                                    val jsCall = "displayAuthError('${event.message}')".trimIndent()
+                                    onExecuteJavascript(jsCall)
+                                }
 
-                            is HomeUiEvent.ShowAuthProfile -> {
-                                appLogger.debug("AppKt", "ShowAuthProfile")
-                                val jsCall = "displayUserInfo('${event.profileImageUrl}', '${event.username}')".trimIndent()
-                                onExecuteJavascript(jsCall)
+                                is HomeUiEvent.ShowAuthProfile -> {
+                                    appLogger.debug("AppKt", "ShowAuthProfile")
+                                    val jsCall = "displayUserInfo('${event.profileImageUrl}', '${event.username}')".trimIndent()
+                                    onExecuteJavascript(jsCall)
+                                }
                             }
                         }
                     }
