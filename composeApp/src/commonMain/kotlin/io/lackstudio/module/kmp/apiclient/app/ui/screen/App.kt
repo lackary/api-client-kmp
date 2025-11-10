@@ -182,7 +182,7 @@ fun App() {
                 scope = "public"
             )
             val authorizeRequestUrl = client.hrefWithHost(
-                host = UnsplashEnvironment.HOST_NAME,
+                hostname = UnsplashEnvironment.HOST_NAME,
                 resource = authRequest
             )
 

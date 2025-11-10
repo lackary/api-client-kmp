@@ -60,7 +60,7 @@ fun  OAuthWebViewBottomSheet(
             readType = WebViewFileReadType.COMPOSE_RESOURCE_FILES,
         )
     } else {
-        println("load url: $url")
+        println("WebView load url: $url")
         rememberWebViewState(url = url)
     }.apply {
         webSettings.apply {
@@ -79,6 +79,7 @@ fun  OAuthWebViewBottomSheet(
     val currentUrlString = webViewState.lastLoadedUrl
 
     val coroutineScope = rememberCoroutineScope()
+
     // *** Logic for clear/logout operation ***
     val onClearAndReloadClicked: () -> Unit = {
         coroutineScope.launch {

@@ -6,19 +6,30 @@ import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.takeFrom
 
-inline fun <reified T : Any> HttpClient.hrefWithHost(host: String, resource: T): String =
-    URLBuilder(protocol = URLProtocol.HTTPS, host).apply {
-        // 1. URLBuilder(host) has already set the protocol and host.
+// Helper function: Cleans the Host string to ensure only the hostname is retained (without protocol or trailing slash)
+fun cleanHost(host: String): String {
+    // Remove all protocol prefixes (http://, https://, ftp://, //)
+    var cleaned = host.replace(Regex("^\\w+://"), "")
+    // Remove all leading or trailing slashes
+    cleaned = cleaned.trimStart('/').trimEnd('/')
+    return cleaned
+}
 
-        // 2. this@hrefWithHost.href(resource)
-        //    This part returns a Path (e.g., /oauth/authorize) and Query Params (?client_id=...).
+inline fun <reified T : Any> HttpClient.hrefWithHost(hostname: String, resource: T): String {
+
+    // If the host is null, an empty string, or contains only whitespace characters, an IllegalArgumentException is thrown.
+    require(hostname.isNotBlank()) { "Host cannot be blank or empty for hrefWithHost function." }
+
+    val cleanedHostname = cleanHost(hostname)
+
+    // Try to create a URLBuilder with a full URL string that includes the host
+    return URLBuilder(protocol = URLProtocol.HTTPS, host = cleanedHostname).apply {
+
         val pathAndQuery = this@hrefWithHost.href(resource)
 
-        // 3. takeFrom merges the path and query params into the URLBuilder.
-        //    (Note: If the resource is a @Resource, href might return a full URL,
-        //     but typically under the Resources plugin, it only returns the Path and Query,
-        //     unless you haven't configured a base URL).
         takeFrom(pathAndQuery)
 
-        // Ktor's takeFrom(String) intelligently parses and merges the path and query parameters.
     }.buildString()
+}
+
+
