@@ -44,6 +44,7 @@ kotlin {
             api(libs.ktor.client.core)
             api(libs.ktor.client.content.negotiation)
             api(libs.ktor.client.logging)
+            api(libs.ktor.client.resources)
             // Ktor Serialization
             api(libs.ktor.serialization.kotlinx.json)
 
@@ -62,6 +63,7 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.ktor.client.mock)
+            implementation(libs.ktor.client.resources)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.koin.test)
             implementation(libs.koin.core)

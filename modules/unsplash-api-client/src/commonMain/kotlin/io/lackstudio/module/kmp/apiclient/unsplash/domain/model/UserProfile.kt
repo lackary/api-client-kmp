@@ -1,0 +1,36 @@
+package io.lackstudio.module.kmp.apiclient.unsplash.domain.model
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class UserProfile (
+    val id: String,
+    val updatedAt: String,
+    val username: String,
+    val name: String,
+    val firstName: String,
+    val lastName: String? = null,
+    val twitterUsername: String? = null,
+    val portfolioUrl: String? = null,
+    val bio: String? = null,
+    val location: String? = null,
+    val links: UserLinks,
+    val profileImage: ProfileImage,
+    val instagramUsername: String? = null,
+    val totalCollections: Long,
+    val totalLikes: Long,
+    val totalPhotos: Long,
+    val totalPromotedPhotos: Long,
+    val totalIllustrations: Long,
+    val totalPromotedIllustrations: Long,
+    val acceptedTos: Boolean,
+    val forHire: Boolean,
+    val social: Social,
+    val photos: List<PreviewPhoto>,
+    val badge: Badge? = null,
+    val tags: Tags,
+    val allowMessages: Boolean,
+    val numericId: Long,
+    val downloads: Long,
+    val meta: Meta
+)

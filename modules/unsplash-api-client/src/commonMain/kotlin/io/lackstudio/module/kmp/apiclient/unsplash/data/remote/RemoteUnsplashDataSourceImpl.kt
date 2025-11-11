@@ -2,25 +2,30 @@ package io.lackstudio.module.kmp.apiclient.unsplash.data.remote
 
 import io.lackstudio.module.kmp.apiclient.core.network.error.toResult
 import io.lackstudio.module.kmp.apiclient.unsplash.data.api.UnsplashApiService
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashPhotoResponse
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashTokenResponse
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthCode
-import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toUnsplashTokenRequest
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.MeProfileResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.PhotoResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.TokenResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthCode
+import io.lackstudio.module.kmp.apiclient.unsplash.mapper.toTokenRequest
 
 class RemoteUnsplashDataSourceImpl(
     private val unsplashApiService: UnsplashApiService,
 ) : RemoteUnsplashDataSource {
-    override suspend fun getPhotos(page: Int, perPage: Int): Result<List<UnsplashPhotoResponse>> {
+    override suspend fun getPhotos(page: Int, perPage: Int): Result<List<PhotoResponse>> {
         return  toResult { unsplashApiService.getPhotos(page, perPage) }
     }
 
-    override suspend fun getPhoto(id: String): Result<UnsplashPhotoResponse> {
+    override suspend fun getPhoto(id: String): Result<PhotoResponse> {
         return toResult { unsplashApiService.getPhoto(id) }
     }
 
-    override suspend fun exchangeOAuth(oAuthCode: UnsplashOAuthCode): Result<UnsplashTokenResponse> {
+    override suspend fun getMe(): Result<MeProfileResponse> {
+        return toResult { unsplashApiService.getMe() }
+    }
+
+    override suspend fun exchangeOAuth(oAuthCode: OAuthCode): Result<TokenResponse> {
         return toResult {
-            val unsplashTokenRequest = oAuthCode.toUnsplashTokenRequest()
+            val unsplashTokenRequest = oAuthCode.toTokenRequest()
             unsplashApiService.postOauthToken(unsplashTokenRequest)
         }
     }

@@ -1,12 +1,12 @@
 package io.lackstudio.module.kmp.apiclient.unsplash.mapper
 
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.request.UnsplashTokenRequest
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashTokenResponse
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthCode
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthToken
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.request.TokenRequest
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.TokenResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthCode
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthToken
 
-fun UnsplashOAuthCode.toUnsplashTokenRequest(): UnsplashTokenRequest {
-    return UnsplashTokenRequest(
+fun OAuthCode.toTokenRequest(): TokenRequest {
+    return TokenRequest(
         clientId = this.clientId,
         clientSecret = this.clientSecret,
         redirectUri = this.redirectUri,
@@ -15,8 +15,8 @@ fun UnsplashOAuthCode.toUnsplashTokenRequest(): UnsplashTokenRequest {
     )
 }
 
-fun UnsplashTokenResponse.toUnsplashOAuthToken(): UnsplashOAuthToken {
-    return UnsplashOAuthToken(
+fun TokenResponse.toOAuthToken(): OAuthToken {
+    return OAuthToken(
         accessToken = this.accessToken,
         tokenType = this.tokenType,
         refreshToken = this.refreshToken,

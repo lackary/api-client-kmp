@@ -5,6 +5,11 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
 
-    factory { AppViewModel(get(), get(), get(), get()) }
-
+    factory { AppViewModel(
+        getPhotosUseCase = get(),
+        exchangeOAuthUseCase = get(),
+        getMeUseCase = get(),
+        appLogger = get(),
+        accessTokenProvider = get())
+    }
 }

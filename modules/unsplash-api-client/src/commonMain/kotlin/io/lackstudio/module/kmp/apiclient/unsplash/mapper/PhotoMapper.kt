@@ -1,31 +1,26 @@
 package io.lackstudio.module.kmp.apiclient.unsplash.mapper
 
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashAlternativeSlugsDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashPhotoLinksDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashPhotoUrlsDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashProfileImageDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashSocialDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashSponsorDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashSponsorshipDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.dto.UnsplashUserLinksDto
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashPhotoResponse
-import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.UnsplashUserResponse
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashAlternativeSlugs
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhoto
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhotoLinks
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhotoUrls
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashProfileImage
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashSocial
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashSponsor
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashSponsorship
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashUser
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashUserLinks
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.PhotoUrlsScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.AlternativeSlugsScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.PhotoLinksScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.SponsorScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.SponsorshipScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.UserLinksScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.PhotoResponse
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.scheme.PhotoUserScheme
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.AlternativeSlugs
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.Photo
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.PhotoLinks
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.PhotoUrls
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.PhotoUser
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.Sponsor
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.Sponsorship
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UserLinks
 
-
-fun UnsplashPhotoResponse.toUnsplashPhoto(): UnsplashPhoto {
-    return UnsplashPhoto(
+fun PhotoResponse.toPreviewPhoto(): Photo {
+    return Photo(
         altDescription = this.altDescription,
-        alternativeSlugs = this.alternativeSlugs.toUnsplashAlternativeSlugs(),
+        alternativeSlugs = this.alternativeSlugs.toAlternativeSlugs(),
         assetType = this.assetType,
         blurHash = this.blurHash,
         color = this.color,
@@ -35,46 +30,19 @@ fun UnsplashPhotoResponse.toUnsplashPhoto(): UnsplashPhoto {
         id = this.id,
         likedByUser = this.likedByUser,
         likes = this.likes,
-        links = this.links.toUnsplashPhotoLinks(),
+        links = this.links.toPhotoLinks(),
         promotedAt = this.promotedAt,
         slug = this.slug,
-        sponsorship = this.sponsorship?.toUnsplashSponsorship(),
+        sponsorship = this.sponsorship?.toSponsorship(),
         updatedAt = this.updatedAt,
-        urls = this.urls.toUnsplashPhotoUrls(),
-        user = this.user.toUnsplashUser(),
+        urls = this.urls.toPhotoUrls(),
+        user = this.user.toPhotoUser(),
         width = this.width,
     )
 }
 
-fun UnsplashUserResponse.toUnsplashUser(): UnsplashUser {
-    return UnsplashUser(
-        acceptedTos = this.acceptedTos,
-        bio = this.bio,
-        firstName = this.firstName,
-        forHire = this.forHire,
-        id = this.id,
-        instagramUsername = this.instagramUsername,
-        lastName = this.lastName,
-        links = this.links.toUnsplashUserLinks(),
-        location = this.location,
-        name = this.name,
-        portfolioUrl = this.portfolioUrl,
-        profileImage = this.profileImage.toUnsplashProfileImage(),
-        social = this.social.toUnsplashSocial(),
-        totalCollections = this.totalCollections,
-        totalIllustrations = this.totalIllustrations,
-        totalLikes = this.totalLikes,
-        totalPhotos = this.totalPhotos,
-        totalPromotedIllustrations = this.totalPromotedIllustrations,
-        totalPromotedPhotos = this.totalPromotedPhotos,
-        twitterUsername = this.twitterUsername,
-        updatedAt = this.updatedAt,
-        username = this.username
-    )
-}
-
-fun UnsplashAlternativeSlugsDto.toUnsplashAlternativeSlugs(): UnsplashAlternativeSlugs {
-    return UnsplashAlternativeSlugs(
+fun AlternativeSlugsScheme.toAlternativeSlugs(): AlternativeSlugs {
+    return AlternativeSlugs(
         german = this.german,
         english = this.english,
         spanish = this.spanish,
@@ -87,8 +55,8 @@ fun UnsplashAlternativeSlugsDto.toUnsplashAlternativeSlugs(): UnsplashAlternativ
     )
 }
 
-fun UnsplashPhotoLinksDto.toUnsplashPhotoLinks(): UnsplashPhotoLinks {
-    return UnsplashPhotoLinks(
+fun PhotoLinksScheme.toPhotoLinks(): PhotoLinks {
+    return PhotoLinks(
         self = this.self,
         html = this.html,
         download = this.download,
@@ -96,28 +64,28 @@ fun UnsplashPhotoLinksDto.toUnsplashPhotoLinks(): UnsplashPhotoLinks {
     )
 }
 
-fun UnsplashSponsorshipDto.toUnsplashSponsorship(): UnsplashSponsorship {
-    return UnsplashSponsorship(
+fun SponsorshipScheme.toSponsorship(): Sponsorship {
+    return Sponsorship(
         impressionUrls = this.impressionUrls,
-        sponsor = this.sponsor.toUnsplashSponsor(),
+        sponsor = this.sponsor.toSponsor(),
         tagline = this.tagline,
         taglineUrl = this.taglineUrl
     )
 }
 
-fun UnsplashPhotoUrlsDto.toUnsplashPhotoUrls(): UnsplashPhotoUrls {
-    return UnsplashPhotoUrls(
+fun PhotoUrlsScheme.toPhotoUrls(): PhotoUrls {
+    return PhotoUrls(
         raw = this.raw,
         full = this.full,
         regular = this.regular,
         small = this.small,
         thumb = this.thumb,
-        smalls3 = this.smalls3
+        smallS3 = smallS3
     )
 }
 
-fun UnsplashUserLinksDto.toUnsplashUserLinks(): UnsplashUserLinks {
-    return UnsplashUserLinks(
+fun UserLinksScheme.toUserLinks(): UserLinks {
+    return UserLinks(
         html = this.html,
         likes = this.photos,
         photos = this.photos,
@@ -126,46 +94,56 @@ fun UnsplashUserLinksDto.toUnsplashUserLinks(): UnsplashUserLinks {
     )
 }
 
-fun UnsplashProfileImageDto.toUnsplashProfileImage(): UnsplashProfileImage {
-    return UnsplashProfileImage(
-        large = this.large,
-        medium = this.medium,
-        small = this.small
-    )
-}
-
-fun UnsplashSocialDto.toUnsplashSocial(): UnsplashSocial {
-    return UnsplashSocial(
-        instagramUsername = this.instagramUsername,
-        paypalEmail = this.paypalEmail,
-        portfolioUrl = this.portfolioUrl,
-        twitterUsername = this.twitterUsername
-    )
-}
-
-fun UnsplashSponsorDto.toUnsplashSponsor(): UnsplashSponsor {
-    return UnsplashSponsor(
-        acceptedTos = this.acceptedTos,
-        bio = this.bio,
-        firstName = this.firstName,
-        forHire = this.forHire,
+fun SponsorScheme.toSponsor(): Sponsor {
+    return Sponsor(
         id = this.id,
-        instagramUsername = this.instagramUsername,
-        lastName = this.lastName,
-        links = this.links.toUnsplashUserLinks(),
-        location = this.location,
+        updatedAt = this.updatedAt,
+        username = this.username,
         name = this.name,
+        firstName = this.firstName,
+        lastName = this.lastName,
+        twitterUsername = this.twitterUsername,
         portfolioUrl = this.portfolioUrl,
-        profileImage = this.profileImage.toUnsplashProfileImage(),
-        social = this.social.toUnsplashSocial(),
+        bio = this.bio,
+        location = this.location,
+        links = this.links.toUserLinks(),
+        profileImage = this.profileImage.toProfileImage(),
+        instagramUsername = this.instagramUsername,
         totalCollections = this.totalCollections,
-        totalIllustrations = this.totalPromotedIllustrations,
         totalLikes = this.totalLikes,
         totalPhotos = this.totalPhotos,
-        totalPromotedIllustrations = this.totalPromotedIllustrations,
         totalPromotedPhotos = this.totalPromotedPhotos,
-        twitterUsername = this.twitterUsername,
+        totalIllustrations = this.totalIllustrations,
+        totalPromotedIllustrations = this.totalPromotedIllustrations,
+        acceptedTos = this.acceptedTos,
+        forHire = this.forHire,
+        social = this.social.toSocial(),
+    )
+}
+
+fun PhotoUserScheme.toPhotoUser(): PhotoUser {
+    return PhotoUser(
+        id = this.id,
         updatedAt = this.updatedAt,
-        username = this.username
+        username = this.username,
+        name = this.name,
+        firstName = this.firstName,
+        lastName = this.lastName,
+        twitterUsername = this.twitterUsername,
+        portfolioUrl = this.portfolioUrl,
+        bio = this.bio,
+        location = this.location,
+        links = this.links.toUserLinks(),
+        profileImage = this.profileImage.toProfileImage(),
+        instagramUsername = this.instagramUsername,
+        totalCollections = this.totalCollections,
+        totalLikes = this.totalLikes,
+        totalPhotos = this.totalPhotos,
+        totalPromotedPhotos = this.totalPromotedPhotos,
+        totalIllustrations = this.totalIllustrations,
+        totalPromotedIllustrations = this.totalPromotedIllustrations,
+        acceptedTos = this.acceptedTos,
+        forHire = this.forHire,
+        social = this.social.toSocial(),
     )
 }
