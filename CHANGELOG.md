@@ -1,3 +1,20 @@
+# [0.8.0](https://github.com/lackary/api-client-kmp/compare/0.7.1...0.8.0) (2025-11-11)
+
+
+### Bug Fixes
+
+* **ui:** resolve the js callback was executed only once. ([36eff9c](https://github.com/lackary/api-client-kmp/commit/36eff9c701ca5054fc36c0c2b379dc64a4e94764))
+* **web:** resolve the invalid parameter in callNative ([84c4935](https://github.com/lackary/api-client-kmp/commit/84c4935bc9d8213a4d2edc03934c1e262dcbb386))
+
+
+### Features
+
+* **api:** implement Unsplash API '/me'. ([8bcfd33](https://github.com/lackary/api-client-kmp/commit/8bcfd33d60624125a135f8b681e54a5bc0eb448f))
+* **test:** add unit test for HttpClientExtenstion ([e59ac35](https://github.com/lackary/api-client-kmp/commit/e59ac35e5f57c365dddc0682e3e0ab2405e98bfe))
+* **ui:** add GetMeUseCase into view layer ([72f1071](https://github.com/lackary/api-client-kmp/commit/72f1071a12223bfdbe6d9ee1bc0576875c219bf3))
+* **web:** add a javascript callback to kmp code ([f47b395](https://github.com/lackary/api-client-kmp/commit/f47b395954030c9a7f05c48fd6e49f5fa2424561))
+* **web:** display profile image and username ([a34e864](https://github.com/lackary/api-client-kmp/commit/a34e8642ab168b1209cb99cee13bd06af22a8f33))
+
 ## [0.7.1](https://github.com/lackary/api-client-kmp/compare/0.7.0...0.7.1) (2025-11-06)
 
 
