@@ -8,9 +8,9 @@ import io.lackstudio.module.kmp.apiclient.app.ui.intent.HomeUiIntent
 import io.lackstudio.module.kmp.apiclient.core.common.logging.AppLogger
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import io.lackstudio.module.kmp.apiclient.ui.viewmodel.BaseViewModel
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthCode
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashOAuthToken
-import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.UnsplashPhoto
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthCode as UnsplashOAuthCode
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthToken as UnsplashOAuthToken
+import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.Photo as UnsplashPhoto
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.ExchangeOAuthUseCase
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.usecase.GetPhotosUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ class AppViewModel(
         val params = GetPhotosParams(page = 1, perPage = 10)
         handleUseCaseCall(
             flow = _photoUiState,
-            useCase = { getPhotosUseCase.invoke(params) },
+            useCase = { getPhotosUseCase(params) },
         )
     }
 
@@ -65,7 +65,7 @@ class AppViewModel(
         )
         handleUseCaseCall(
             flow = _oauthUiState,
-            useCase = { exchangeOAuthUseCase.invoke(unsplashOAuthCode) }
+            useCase = { exchangeOAuthUseCase(unsplashOAuthCode) }
         )
     }
 
@@ -102,7 +102,7 @@ class AppViewModel(
             onLoading = {
                 _uiState.update { state -> state.copy(photos = AppUiState.Loading) }
             },
-            useCase = { getPhotosUseCase.invoke(params)},
+            useCase = { getPhotosUseCase(params)},
             onSuccess = { data ->
                 appLogger.debug("AppViewModel", "on onSuccess data $data")
                 _uiState.update { state -> state.copy(photos = AppUiState.Success(data)) }
@@ -120,7 +120,7 @@ class AppViewModel(
                 _uiState.update { state -> state.copy(profile = AppUiState.Loading) }
             },
             useCase = {
-                getMeUseCase.invoke(input = Unit)
+                getMeUseCase(input = Unit)
             },
             onSuccess = { data ->
                 appLogger.debug("AppViewModel","Profile: $data")
@@ -154,7 +154,7 @@ class AppViewModel(
             },
             // useCase: Execute UseCase
             useCase = {
-                exchangeOAuthUseCase.invoke(unsplashOAuthCode)
+                exchangeOAuthUseCase(unsplashOAuthCode)
             },
             // onSuccess: On success, update the accessToken property in MviUiState
             onSuccess = { data ->

@@ -16,12 +16,5 @@ object Environment {
     const val OAUTH_TOKEN = "https://unsplash.com/oauth/token"
 
     // parameter
-    const val PARAM_CLIENT_ID = "client_id"
-    const val PARAM_CLIENT_SECRET = "client_secret"
-    const val PARAM_REDIRECT_URI = "redirect_uri"
-    const val PARAM_CODE = "code"
-    const val PARAM_GRANT_TYPE = "grant_type"
     const val AUTH_SCHEME_PUBLIC = "Client-ID"
-
-    val OAUTH_PATH_SEGMENTS = listOf("oauth", "authorize")
 }

@@ -51,7 +51,7 @@ import io.lackstudio.module.kmp.apiclient.core.common.util.appPlatformLogWriter
 import io.lackstudio.module.kmp.apiclient.core.di.appLoggerModule
 import io.lackstudio.module.kmp.apiclient.core.network.extension.hrefWithHost
 import io.lackstudio.module.kmp.apiclient.ui.component.OAuthWebViewBottomSheet
-import io.lackstudio.module.kmp.apiclient.core.network.oauth.model.UnsplashAuthorizeRequest
+import io.lackstudio.module.kmp.apiclient.unsplash.data.model.request.AuthorizeRequest as UnsplashAuthorizeRequest
 import io.lackstudio.module.kmp.apiclient.unsplash.di.unsplashModule
 import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment as UnsplashEnvironment
 import kotlinx.coroutines.launch
