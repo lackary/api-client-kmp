@@ -2,52 +2,57 @@ package io.lackstudio.module.kmp.apiclient.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.lackstudio.module.kmp.apiclient.core.common.error.AppException
-import io.lackstudio.module.kmp.apiclient.core.domain.result.UseCaseResult
+import io.lackstudio.module.kmp.apiclient.core.common.error.CommonException
+import io.lackstudio.module.kmp.apiclient.core.network.error.RemoteException
+import io.lackstudio.module.kmp.apiclient.core.domain.usecase.UseCaseResult
+import io.lackstudio.module.kmp.apiclient.core.network.error.StructuredApiException
+import io.lackstudio.module.kmp.apiclient.core.persistence.LocalException
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
 
-    protected open fun getAppErrorMessage(exception: AppException): String {
-        return when(exception) {
-            // Network errors
-            is AppException.Network -> when (exception) {
-                is AppException.Network.Timeout -> "Connection timeout, please check your network connection."
-                is AppException.Network.Unknown -> "Network connection error, please try again later."
+    protected open fun getAppErrorMessage(e: Exception): String {
+        return when(e) {
+            // Prioritize structured API exceptions (e.g., UnsplashApiException)
+            is StructuredApiException -> {
+                // Regardless of the original error code (400, 401, 403...),
+                // if the Feature layer has parsed a structuredMessage, prioritize displaying it.
+                // For example: If Unsplash returns "Access Key Invalid", it will be displayed directly here.
+                e.structuredMessage ?: getApiDefaultMessage(e.originalApiException)
             }
 
-            is AppException.Api -> {
-                // Use the Elvis operator to provide a fallback message if message is null or blank
-                exception.message.takeIf { it?.isNotBlank() == true } ?:
-                when (exception.code) {
-                    401 -> "Authentication failed, please log in again."
-                    404 -> "Resource not found."
-                    in 500..599 -> "Server error, please try again later."
-                    else -> "API error: ${exception.code}"
-                }
-            }
+            // 2. Handle raw API exceptions not wrapped in StructuredApiException
+            // (e.g., simple API calls that don't undergo special parsing)
+            is RemoteException.Api -> getApiDefaultMessage(e)
 
-            // Business logic errors
-            is AppException.Business.ResourceNotFound -> {
-                val type = when (exception.resourceType.lowercase()) {
-                    "user" -> "user"
-                    "image" -> "image"
-                    "product" -> "product"
-                    else -> "resource"
-                }
-                "The $type you're looking for was not found."
-            }
+            // 3. Handle network connection issues
+            is RemoteException.Network.Timeout -> "Connection timeout. Please check your internet."
+            is RemoteException.Network.Unknown -> "Network unavailable."
 
-            // Add more Business error handling here
-            is AppException.Business.InvalidData -> "Invalid data."
-            is AppException.Business.Serialization -> "Data serialization error."
+            // 4. Local and other errors
+            is LocalException.Persistence.DatabaseError -> "Database error."
+            is LocalException.Persistence.ResourceNotFound -> "Resource not found."
+            is CommonException.Parsing.InvalidDataFormat -> "Data format error."
 
-            // Unknown error
-            is AppException.Unknown -> "An unknown error occurred."
+            else -> "An unexpected error occurred."
         }
     }
+
+    // Extract common default message logic to avoid code duplication
+    private fun getApiDefaultMessage(apiException: RemoteException.Api): String {
+        return when (apiException) {
+            is RemoteException.Api.BadRequest -> apiException.message ?: "Invalid request." // 400
+            is RemoteException.Api.Unauthorized -> "Session expired. Please login again." // 401
+            is RemoteException.Api.Forbidden -> "Access denied." // 403
+            is RemoteException.Api.NotFound -> "Resource not found." // 404
+            is RemoteException.Api.TooManyRequests -> "Too many requests. Please try again later." // 429
+            is RemoteException.Api.Server -> "Server error. Please try again later." // 5xx
+            is RemoteException.Api.UnexpectedStatus -> "Unexpected error (${apiException.code})."
+        }
+    }
+
     /**
      * Defines a generic function in BaseViewModel to handle UseCaseResult.
      * It takes a suspend function (representing the UseCase call) and automatically handles
@@ -96,7 +101,7 @@ abstract class BaseViewModel : ViewModel() {
                     onSuccess(result.data) // Call the Success logic passed in from the outside.
                 }
                 is UseCaseResult.Error -> {
-                    println("result: $result")
+                    println("result: ${result.exception}")
                     val errorMessage = getAppErrorMessage(result.exception) // Use BaseViewModel's error logic.
                     onError(errorMessage) // Call the Error logic passed in from the outside.
                 }

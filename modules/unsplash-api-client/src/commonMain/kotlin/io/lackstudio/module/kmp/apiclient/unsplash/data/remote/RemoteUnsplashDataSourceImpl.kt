@@ -1,6 +1,5 @@
 package io.lackstudio.module.kmp.apiclient.unsplash.data.remote
 
-import io.lackstudio.module.kmp.apiclient.core.network.error.toResult
 import io.lackstudio.module.kmp.apiclient.unsplash.data.api.UnsplashApiService
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.MeProfileResponse
 import io.lackstudio.module.kmp.apiclient.unsplash.data.model.response.PhotoResponse
@@ -12,19 +11,19 @@ class RemoteUnsplashDataSourceImpl(
     private val unsplashApiService: UnsplashApiService,
 ) : RemoteUnsplashDataSource {
     override suspend fun getPhotos(page: Int, perPage: Int): Result<List<PhotoResponse>> {
-        return  toResult { unsplashApiService.getPhotos(page, perPage) }
+        return  toUnsplashResult { unsplashApiService.getPhotos(page, perPage) }
     }
 
     override suspend fun getPhoto(id: String): Result<PhotoResponse> {
-        return toResult { unsplashApiService.getPhoto(id) }
+        return toUnsplashResult { unsplashApiService.getPhoto(id) }
     }
 
     override suspend fun getMe(): Result<MeProfileResponse> {
-        return toResult { unsplashApiService.getMe() }
+        return toUnsplashResult { unsplashApiService.getMe() }
     }
 
     override suspend fun exchangeOAuth(oAuthCode: OAuthCode): Result<TokenResponse> {
-        return toResult {
+        return toUnsplashResult {
             val unsplashTokenRequest = oAuthCode.toTokenRequest()
             unsplashApiService.postOauthToken(unsplashTokenRequest)
         }

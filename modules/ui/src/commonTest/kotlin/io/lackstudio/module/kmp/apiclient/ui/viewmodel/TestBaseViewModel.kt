@@ -1,7 +1,6 @@
 package io.lackstudio.module.kmp.apiclient.ui.viewmodel
 
-import io.lackstudio.module.kmp.apiclient.core.common.error.AppException
-import io.lackstudio.module.kmp.apiclient.core.domain.result.UseCaseResult
+import io.lackstudio.module.kmp.apiclient.core.domain.usecase.UseCaseResult
 import io.lackstudio.module.kmp.apiclient.ui.state.AppUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -17,7 +16,7 @@ class TestBaseViewModel : BaseViewModel() {
     }
 
     // Expose getAppErrorMessage for testing
-    fun getAppErrorMessageForTest(exception: AppException): String {
+    fun getAppErrorMessageForTest(exception: Exception): String {
         return super.getAppErrorMessage(exception)
     }
 }
