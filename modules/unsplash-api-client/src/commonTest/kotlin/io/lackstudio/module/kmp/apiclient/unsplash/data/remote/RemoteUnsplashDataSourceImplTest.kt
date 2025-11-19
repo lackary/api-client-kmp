@@ -7,13 +7,14 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.logging.LogLevel
 import io.lackstudio.module.kmp.apiclient.unsplash.data.api.UnsplashApiService
 import io.lackstudio.module.kmp.apiclient.unsplash.data.api.UnsplashApiServiceImpl
-import io.lackstudio.module.kmp.apiclient.core.common.error.AppException
+import io.lackstudio.module.kmp.apiclient.core.network.error.RemoteException
 import io.lackstudio.module.kmp.apiclient.unsplash.di.BaseKoinTest
 import io.ktor.http.HttpStatusCode
 import io.lackstudio.module.kmp.apiclient.core.common.logging.setupKermitLogger
 import io.lackstudio.module.kmp.apiclient.core.di.KTOR_LOGGER_TAG
 import io.lackstudio.module.kmp.apiclient.core.network.KtorConfig
 import io.lackstudio.module.kmp.apiclient.core.network.oauth.AccessTokenProvider
+import io.lackstudio.module.kmp.apiclient.unsplash.data.error.UnsplashApiException
 import io.lackstudio.module.kmp.apiclient.unsplash.di.provideHttpClientEngineTest
 import io.lackstudio.module.kmp.apiclient.unsplash.platform.getUnsplashAccessKey
 import io.lackstudio.module.kmp.apiclient.unsplash.utils.Environment
@@ -71,8 +72,11 @@ class RemoteUnsplashDataSourceImplTest: BaseKoinTest() {
             val result = remoteUnsplashDataSource.getPhoto("non-existent-id")
             assertTrue(result.isFailure)
             val appException = result.exceptionOrNull()
-            assertTrue(appException is AppException.Api.NotFound)
-            assertEquals(HttpStatusCode.NotFound.value, appException.code)
+            assertTrue(appException is UnsplashApiException)
+            assertEquals(
+                HttpStatusCode.NotFound.value,
+                appException.originalApiException.code
+            )
         }
 
 }

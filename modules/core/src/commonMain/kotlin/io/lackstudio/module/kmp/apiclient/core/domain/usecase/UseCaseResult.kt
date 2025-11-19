@@ -1,6 +1,4 @@
-package io.lackstudio.module.kmp.apiclient.core.domain.result
-
-import io.lackstudio.module.kmp.apiclient.core.common.error.AppException
+package io.lackstudio.module.kmp.apiclient.core.domain.usecase
 
 /**
  * Encapsulates the result of a Use Case operation.
@@ -18,5 +16,5 @@ sealed class UseCaseResult<out T> {
      * Represents a failed Use Case operation and contains the AppException that caused the failure.
      * @param exception The AppException instance that caused the operation to fail.
      */
-    data class Error(val exception: AppException) : UseCaseResult<Nothing>() // Nothing indicates that this branch does not return any data
+    data class Error(val exception: Exception) : UseCaseResult<Nothing>() // Nothing indicates that this branch does not return any data
 }

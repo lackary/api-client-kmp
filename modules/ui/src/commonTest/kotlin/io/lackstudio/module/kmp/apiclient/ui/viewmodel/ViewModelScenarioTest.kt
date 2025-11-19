@@ -33,11 +33,19 @@ class ViewModelScenarioTest {
     @Test
     fun `fetchData success should emit Loading then Success state`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            assertEquals(AppUiState.Loading, awaitItem())
+            // Initial state
+            assertEquals(AppUiState.Idle, awaitItem())
+
+            // Trigger action
             viewModel.fetchData(success = true)
+
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
+
             val successState = awaitItem()
             assertTrue(successState is AppUiState.Success)
             assertEquals("Success Data", successState.data)
+
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -45,11 +53,67 @@ class ViewModelScenarioTest {
     @Test
     fun `fetchData error should emit Loading then Error state`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            assertEquals(AppUiState.Loading, awaitItem())
+            // Initial state
+            assertEquals(AppUiState.Idle, awaitItem())
+
+            // Trigger action
             viewModel.fetchData(success = false)
+
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
+
             val errorState = awaitItem()
             assertTrue(errorState is AppUiState.Error)
-            assertEquals("Network connection error, please try again later.", errorState.message)
+
+            // --- Key Modification ---
+            // Originally: "Network connection error, please try again later."
+            // Now BaseViewModel returns "Network unavailable." for RemoteException.Network.Unknown
+            assertEquals("Network unavailable.", errorState.message)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    // MVI Success Scenario Test
+    @Test
+    fun `fetchDataMvi success should update state to Success`() = runTest(testDispatcher) {
+        viewModel.uiState.test {
+            // Initial state verification
+            assertEquals(AppUiState.Idle, awaitItem())
+
+            // Trigger MVI action
+            viewModel.fetchDataMvi(success = true)
+
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
+
+            val successState = awaitItem()
+            assertTrue(successState is AppUiState.Success)
+            assertEquals("MVI Success Data", successState.data)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `fetchDataMvi error should update state to Error with parsed message`() = runTest(testDispatcher) {
+        viewModel.uiState.test {
+            // Initial state verification
+            assertEquals(AppUiState.Idle, awaitItem())
+
+            // Trigger MVI action (simulate failure)
+            viewModel.fetchDataMvi(success = false)
+
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
+
+            val errorState = awaitItem()
+            assertTrue(errorState is AppUiState.Error)
+
+            // Verify if the error message is parsed by BaseViewModel
+            // (fetchDataMvi internally throws RemoteException.Network.Unknown, should be parsed as "Network unavailable.")
+            assertEquals("Network unavailable.", errorState.message)
+
             cancelAndConsumeRemainingEvents()
         }
     }
