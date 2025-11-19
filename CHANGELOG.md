@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/lackary/api-client-kmp/compare/0.8.0...0.8.1) (2025-11-19)
+
+
+### Bug Fixes
+
+* **test:** resolve failing test in RemoteUnsplashDataSourceImplTest ([48f66b7](https://github.com/lackary/api-client-kmp/commit/48f66b713bbb3557cbdc7effdc7246831405a480))
+
 # [0.8.0](https://github.com/lackary/api-client-kmp/compare/0.7.1...0.8.0) (2025-11-11)
 
 
