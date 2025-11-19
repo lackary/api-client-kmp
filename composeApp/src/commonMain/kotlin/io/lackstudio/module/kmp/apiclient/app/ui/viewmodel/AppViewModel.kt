@@ -40,11 +40,11 @@ class AppViewModel(
 
     // MVVM uses multiple StateFlows to expose UI state
     private val _photoUiState =
-        MutableStateFlow<AppUiState<List<UnsplashPhoto>>>(AppUiState.Default)
+        MutableStateFlow<AppUiState<List<UnsplashPhoto>>>(AppUiState.Idle)
     val photoUiState: StateFlow<AppUiState<List<UnsplashPhoto>>> = _photoUiState.asStateFlow()
 
     private val _oauthUiState =
-        MutableStateFlow<AppUiState<UnsplashOAuthToken>>(AppUiState.Default)
+        MutableStateFlow<AppUiState<UnsplashOAuthToken>>(AppUiState.Idle)
     val oauthUiState: StateFlow<AppUiState<UnsplashOAuthToken>> = _oauthUiState.asStateFlow()
 
     fun loadPhotos() {
@@ -144,7 +144,7 @@ class AppViewModel(
             clientId = getUnsplashAccessKey(),
             clientSecret = getUnsplashSecretKey(),
             redirectUri = Environment.AUTH_REDIRECT_URL,
-            code = code
+            code = "X"
         )
         // *** Use MVI-specific abstract function ***
         handleUseCaseCall(

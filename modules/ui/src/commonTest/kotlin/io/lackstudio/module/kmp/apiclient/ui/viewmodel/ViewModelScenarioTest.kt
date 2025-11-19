@@ -34,16 +34,13 @@ class ViewModelScenarioTest {
     fun `fetchData success should emit Loading then Success state`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             // Initial state
-            assertEquals(AppUiState.Loading, awaitItem())
+            assertEquals(AppUiState.Idle, awaitItem())
 
             // Trigger action
             viewModel.fetchData(success = true)
 
-            // Expect handleUseCaseCall internally to set state to Loading first (even though initial is Loading, logic triggers it again).
-            // Note: If handleUseCaseCall implementation emits Loading repeatedly, we might need to consume it once here.
-            // But since handleUseCaseCall uses flow.value = ... and StateFlow does not emit identical values,
-            // if the initial state is Loading, we shouldn't receive a new Loading item here.
-            // Simply await Success.
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
 
             val successState = awaitItem()
             assertTrue(successState is AppUiState.Success)
@@ -56,9 +53,14 @@ class ViewModelScenarioTest {
     @Test
     fun `fetchData error should emit Loading then Error state`() = runTest(testDispatcher) {
         viewModel.uiState.test {
-            assertEquals(AppUiState.Loading, awaitItem())
+            // Initial state
+            assertEquals(AppUiState.Idle, awaitItem())
 
+            // Trigger action
             viewModel.fetchData(success = false)
+
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
 
             val errorState = awaitItem()
             assertTrue(errorState is AppUiState.Error)
@@ -77,14 +79,13 @@ class ViewModelScenarioTest {
     fun `fetchDataMvi success should update state to Success`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             // Initial state verification
-            assertEquals(AppUiState.Loading, awaitItem())
+            assertEquals(AppUiState.Idle, awaitItem())
 
             // Trigger MVI action
             viewModel.fetchDataMvi(success = true)
 
-            // Note: Since initial state is already Loading, and fetchDataMvi sets it to Loading as the first step.
-            // StateFlow filters out duplicate values by default (DistinctUntilChanged), so we might not receive a second Loading event here.
-            // We directly await the next change, which is Success.
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
 
             val successState = awaitItem()
             assertTrue(successState is AppUiState.Success)
@@ -98,12 +99,13 @@ class ViewModelScenarioTest {
     fun `fetchDataMvi error should update state to Error with parsed message`() = runTest(testDispatcher) {
         viewModel.uiState.test {
             // Initial state verification
-            assertEquals(AppUiState.Loading, awaitItem())
+            assertEquals(AppUiState.Idle, awaitItem())
 
             // Trigger MVI action (simulate failure)
             viewModel.fetchDataMvi(success = false)
 
-            // Similarly, StateFlow filters duplicate Loading, directly await Error
+            // Expect Loading state first
+            assertEquals(AppUiState.Loading, awaitItem())
 
             val errorState = awaitItem()
             assertTrue(errorState is AppUiState.Error)

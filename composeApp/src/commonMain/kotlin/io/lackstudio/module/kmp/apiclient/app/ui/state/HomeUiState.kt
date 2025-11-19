@@ -6,7 +6,7 @@ import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.OAuthToken as Un
 import io.lackstudio.module.kmp.apiclient.unsplash.domain.model.Photo as UnsplashPhoto
 
 data class HomeUiState(
-    val photos: AppUiState<List<UnsplashPhoto>> = AppUiState.Default,
-    val profile: AppUiState<UnsplashMe> = AppUiState.Default,
-    val oAuthToken: AppUiState<UnsplashOAuthToken> = AppUiState.Default,
+    val photos: AppUiState<List<UnsplashPhoto>> = AppUiState.Idle,
+    val profile: AppUiState<UnsplashMe> = AppUiState.Idle,
+    val oAuthToken: AppUiState<UnsplashOAuthToken> = AppUiState.Idle,
 )

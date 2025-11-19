@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 // Test ViewModel to simulate real business logic
 class TestViewModel : BaseViewModel() {
-    private val _uiState = MutableStateFlow<AppUiState<String>>(AppUiState.Loading)
+    private val _uiState = MutableStateFlow<AppUiState<String>>(AppUiState.Idle)
     val uiState = _uiState
 
     // Simulate an actual data request action
