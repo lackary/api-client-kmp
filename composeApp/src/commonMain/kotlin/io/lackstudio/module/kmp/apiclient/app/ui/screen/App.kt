@@ -299,7 +299,7 @@ fun IconOnlyButtonsAndFirebaseAuth(
  *
  * By using this approach, you can avoid Koin-related errors during UI previews and render the screen correctly.
  */
-@Preview()
+@Preview
 @Composable
 fun AppPreview() {
     KoinApplication(application = {
