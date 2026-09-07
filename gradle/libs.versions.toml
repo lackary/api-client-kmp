@@ -24,14 +24,14 @@ kotlin-wrappers = "2026.9.1"
 
 # Google
 googleServices = "4.5.0"
-googleGms = "21.6.0"
+googleGms = "22.0.0"
 googleId = "1.2.0"
 googleKsp = "2.3.11"
 googleFirebaseBom = "34.18.0"
 
 # Firebase
 gitliveFirebase = "2.7.0"
-mirzemehdiKmpAuth = "2.3.1"
+mirzemehdiKmpAuth = "3.0.6"
 googleFirebaseCommon = "21.0.0"
 googleFirebaseAuth = "23.2.1"
 
@@ -52,7 +52,7 @@ composeMaterial = "1.7.3"
 kermit = "2.1.0"
 
 # KSafe
-ksafe = "2.2.1"
+ksafe = "3.2.0"
 
 # JVM
 slf4j = "2.0.19"
