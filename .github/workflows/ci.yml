@@ -83,6 +83,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Fix macOS GPG Socket Length for act
+        if: ${{ env.ACT }}
+        run: |
+          mkdir -p /tmp/act_runner_temp
+          echo "RUNNER_TEMP=/tmp/act_runner_temp" >> $GITHUB_ENV
+
       - name: Set up JDK 21
         uses: actions/setup-java@v6
         with:
