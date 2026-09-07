@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'Shared'
-    spec.version                  = '0.12.9'
+    spec.version                  = '0.13.2'
     spec.homepage                 = 'https://github.com/lackary/omnifeed-kmp'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
